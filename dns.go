@@ -24,7 +24,7 @@ func parseQuery(m *dns.Msg) {
 			ip := replacer.Replace(q.Name)
 
 			// Send response
-			rr, err := dns.NewRR(fmt.Sprintf("%s TXT %s", q.Name, ip))
+			rr, err := dns.NewRR(fmt.Sprintf("%s TXT %s", q.Name, GeoHandle(ip)))
 			if err == nil {
 				m.Answer = append(m.Answer, rr)
 			}

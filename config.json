@@ -1,7 +1,16 @@
 {
     "databases": [
         {
-            "file": "ipv4.csv"
+            "file": "ipv4.csv",
+            "fields": {
+                "cidr": "network"
+            }
+        },
+        {
+            "file": "ipv6.csv",
+            "fields": {
+                "cidr": "network"
+            }
         }
     ]
 }

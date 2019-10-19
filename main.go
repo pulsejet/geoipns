@@ -29,7 +29,7 @@ func main() {
 
 	// Get the database into memory
 	for _, dbc := range config.Databases {
-		setupDatabase(&dbc)
+		SetupDatabase(&dbc)
 	}
 
 	// Attach handler function
