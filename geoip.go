@@ -10,6 +10,7 @@ import (
 	"net"
 	"os"
 	"sort"
+	"strings"
 )
 
 // Main database
@@ -32,10 +33,13 @@ func (r DatabaseRow) getIP() (string, error) {
 }
 
 func (r DatabaseRow) getResponse(db *Database) string {
+	response := ""
 	if db.UseLocMap {
-		return locmap[r.Location]
+		response = locmap[r.Location]
+	} else {
+		response = r.Location
 	}
-	return r.Location
+	return strings.ReplaceAll(response, " ", "_")
 }
 
 // Database a database of GeoIP

@@ -14,7 +14,7 @@ import (
 type Config struct {
 	Databases         []DatabaseConfig `json:"databases"`
 	LocationFile      string           `json:"location_file"`
-	LocationFileField string           `json:"location_file_field"`
+	LocationFileField []string         `json:"location_file_field"`
 	LocationFileKey   string           `json:"location_file_key"`
 }
 

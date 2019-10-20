@@ -27,13 +27,16 @@ func initializeLocationMap(config *Config) map[string]string {
 
 	// Get indices
 	keyIndex := -1
-	locIndex := -1
+	locIndices := make([]int, len(config.LocationFileField))
 	for i, f := range header {
-		switch f {
-		case config.LocationFileKey:
+		if f == config.LocationFileKey {
 			keyIndex = i
-		case config.LocationFileField:
-			locIndex = i
+		} else {
+			for j, x := range config.LocationFileField {
+				if x == f {
+					locIndices[j] = i
+				}
+			}
 		}
 	}
 
@@ -49,7 +52,18 @@ func initializeLocationMap(config *Config) map[string]string {
 			log.Fatal(err)
 		}
 
-		lmap[record[keyIndex]] = record[locIndex]
+		// Get location
+		loc := ""
+		for _, i := range locIndices {
+			if i != -1 && record[i] != "" {
+				if loc == "" {
+					loc += record[i]
+				} else {
+					loc += ", " + record[i]
+				}
+			}
+		}
+		lmap[record[keyIndex]] = loc
 	}
 
 	return lmap

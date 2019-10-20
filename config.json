@@ -19,5 +19,5 @@
     ],
     "location_file": "locations.csv",
     "location_file_key": "geoname_id",
-    "location_file_field": "country_name"
+    "location_file_field": ["city_name", "subdivision_1_name", "country_name"]
 }
