@@ -28,6 +28,11 @@ func (r DatabaseRow) getIP() (string, error) {
 	return net.IP(bin).String(), nil
 }
 
+func (r DatabaseRow) getResponse() string {
+	ips, _ := r.getIP()
+	return ips
+}
+
 // Database a database of GeoIP
 type Database struct {
 	Rows []DatabaseRow
@@ -178,9 +183,13 @@ func GeoHandle(ipstr string) string {
 
 		// Tracker for HighIPs encountered
 		numHigh := 0
-
 		// Check if index matches
-		if i > 0 && i < db.Len() {
+		if i < db.Len() {
+			// Check for immediate match
+			if db.Rows[i].IP == hexIP {
+				return db.Rows[i].getResponse()
+			}
+
 			// Go back five paces at most
 			for j := 1; j <= 5; j++ {
 				// Look out for invalid calls
@@ -193,8 +202,7 @@ func GeoHandle(ipstr string) string {
 
 				// Check if IP matches or unbalanced LowIP
 				if row.IP == hexIP || (!row.IsHigh && numHigh <= 0) {
-					ips, _ := row.getIP()
-					return ips
+					return row.getResponse()
 				}
 
 				// Increment counter if high IP
