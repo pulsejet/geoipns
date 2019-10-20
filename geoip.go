@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/csv"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -60,47 +59,28 @@ func (db Database) Less(i, j int) bool {
 func (db Database) Swap(i, j int) { db.Rows[i], db.Rows[j] = db.Rows[j], db.Rows[i] }
 
 // Lookup the database
-func (db Database) Lookup(lookupIP net.IP) (*DatabaseRow, error) {
+func (db Database) Lookup(lookupIP net.IP) *DatabaseRow {
 	// Get the index to be inserted at
 	i := sort.Search(db.Len(), func(i int) bool {
-		return bytes.Compare(*db.Rows[i].IP, lookupIP) >= 0
+		c := bytes.Compare(*db.Rows[i].IP, lookupIP)
+		return c > 0 || (c == 0 && db.Rows[i].IsHigh)
 	})
 
-	// Tracker for HighIPs encountered
-	numHigh := 0
-
 	// Check if index matches
-	if i < db.Len() {
-		// Check for immediate match
-		if bytes.Compare(*db.Rows[i].IP, lookupIP) == 0 {
-			return db.Rows[i], nil
+	if i > 0 && i < db.Len() {
+		// Get the row
+		row := db.Rows[i-1]
+
+		// Check if lowIP
+		if !row.IsHigh {
+			return row
 		}
 
-		// Go back five paces at most
-		for j := 1; j <= 5; j++ {
-			// Look out for invalid calls
-			if i-j < 0 {
-				break
-			}
-
-			// Get the row
-			row := db.Rows[i-j]
-
-			// Check if IP matches or unbalanced LowIP
-			if bytes.Compare(*row.IP, lookupIP) == 0 || (!row.IsHigh && numHigh <= 0) {
-				return row, nil
-			}
-
-			// Increment counter if high IP
-			if row.IsHigh {
-				numHigh++
-			} else {
-				numHigh--
-			}
-		}
+		// Return parent if highIP
+		return row.Parent
 	}
 
-	return &DatabaseRow{}, errors.New("Not Found")
+	return nil
 }
 
 // DatabaseConfig is the format of configuration for geoip db
@@ -292,8 +272,8 @@ func GeoHandle(ipstr string) string {
 	response := ""
 	for _, dbl := range dbs {
 		for _, db := range dbl {
-			row, err := db.Lookup(lookupIP)
-			if err == nil {
+			row := db.Lookup(lookupIP)
+			if row != nil {
 				response += row.getResponse(db)
 				break
 			}
