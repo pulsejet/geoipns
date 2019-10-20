@@ -154,7 +154,6 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 		}
 	}
 
-	k := 0
 	for {
 		// Read record
 		record, err := r.Read()
@@ -211,11 +210,6 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 		highRow.IP = highIP
 		highRow.IsHigh = true
 		mdb.Rows = append(mdb.Rows, highRow)
-
-		k++
-		if k > 4 {
-			break
-		}
 	}
 
 	// Sort the database
@@ -227,13 +221,7 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 	}
 	dbs[index] = append(dbs[index], mdb)
 
-	// Print database
-	for _, x := range mdb.Rows {
-		ipx, _ := x.getIP()
-		fmt.Println(ipx, x.IsHigh, x.Location)
-	}
-
-	fmt.Println("Read it all!")
+	fmt.Println("Read database", dbc.File)
 }
 
 func unknownResponse() string {

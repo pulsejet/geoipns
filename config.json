@@ -2,7 +2,7 @@
     "databases": [
         [
             {
-                "file": "ipv4.csv",
+                "file": "GeoLite2-City-Blocks-IPv4.csv",
                 "fields": {
                     "cidr": "network",
                     "location": "geoname_id"
@@ -10,7 +10,7 @@
                 "use_loc_map": true
             },
             {
-                "file": "ipv6.csv",
+                "file": "GeoLite2-City-Blocks-IPv6.csv",
                 "fields": {
                     "cidr": "network",
                     "location": "geoname_id"
@@ -26,10 +26,18 @@
                     "location": "autonomous_system_organization"
                 },
                 "use_loc_map": false
+            },
+            {
+                "file": "GeoLite2-ASN-Blocks-IPv6.csv",
+                "fields": {
+                    "cidr": "network",
+                    "location": "autonomous_system_organization"
+                },
+                "use_loc_map": false
             }
         ]
     ],
-    "location_file": "locations.csv",
+    "location_file": "GeoLite2-City-Locations-en.csv",
     "location_file_key": "geoname_id",
     "location_file_field": ["city_name", "subdivision_1_iso_code", "country_iso_code"]
 }
