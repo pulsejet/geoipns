@@ -10,8 +10,12 @@ import (
 	"github.com/miekg/dns"
 )
 
+var mConfig Config
+
 // Config is the configuration format
 type Config struct {
+	Debug bool `json:"debug"`
+
 	Databases [][]DatabaseConfig `json:"databases"`
 
 	LocationFile      string   `json:"location_file"`
@@ -27,15 +31,14 @@ func main() {
 	}
 
 	// Read config
-	var config Config
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-	json.Unmarshal(byteValue, &config)
+	json.Unmarshal(byteValue, &mConfig)
 
 	// Setup Engine
-	SetupEngine(&config)
+	SetupEngine(&mConfig)
 
 	// Get the database into memory
-	for i, dbcs := range config.Databases {
+	for i, dbcs := range mConfig.Databases {
 		for _, dbc := range dbcs {
 			SetupDatabase(&dbc, i)
 		}

@@ -14,7 +14,9 @@ func parseQuery(m *dns.Msg) {
 		switch q.Qtype {
 		case dns.TypeTXT:
 			// Debug log
-			log.Printf("TXT Query for %s\n", q.Name)
+			if mConfig.Debug {
+				log.Printf("TXT Query for %s\n", q.Name)
+			}
 
 			// Get IP
 			replacer := strings.NewReplacer(
