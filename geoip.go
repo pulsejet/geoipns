@@ -24,6 +24,7 @@ type DatabaseRow struct {
 	Complement *net.IP
 	IsHigh     bool
 	Location   *string
+	Parent     *DatabaseRow
 }
 
 func (r DatabaseRow) getResponse(db *Database) string {
@@ -240,6 +241,25 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 
 	// Sort the database
 	sort.Sort(mdb)
+
+	// Set parent values
+	parents := rowStack{}
+	for _, row := range mdb.Rows {
+		// Pop parent if highIP
+		if row.IsHigh {
+			parents, _ = parents.Pop()
+		}
+
+		// Set value if has a parent
+		if p := parents.Peek(); p != nil {
+			row.Parent = p
+		}
+
+		// Push parent if lowIP
+		if !row.IsHigh {
+			parents = parents.Push(row)
+		}
+	}
 
 	// Add database to databases
 	if len(dbs) <= index {
