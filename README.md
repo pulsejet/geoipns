@@ -11,6 +11,7 @@ To build and run
 go get github.com/miekg/dns
 git clone https://github.com/pulsejet/geoipns.git geoipns && cd geoipns
 go build
+./getdata.sh
 ./geoipns
 ```
 
