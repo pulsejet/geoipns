@@ -51,7 +51,7 @@ func (db Database) Less(i, j int) bool {
 	c := bytes.Compare(*ri.IP, *rj.IP)
 	if c == 0 {
 		if ri.IsHigh != rj.IsHigh {
-			return ri.IsHigh
+			return (ri.IP == rj.Complement) != ri.IsHigh
 		}
 		return bytes.Compare(*ri.Complement, *rj.Complement) > 0
 	}
