@@ -20,6 +20,14 @@ type DatabaseRow struct {
 	IsHigh bool
 }
 
+func (r DatabaseRow) getIP() (string, error) {
+	bin, err := hex.DecodeString(r.IP)
+	if err != nil {
+		return r.IP, err
+	}
+	return net.IP(bin).String(), nil
+}
+
 // Database a database of GeoIP
 type Database struct {
 	Rows []DatabaseRow
@@ -139,9 +147,7 @@ func SetupDatabase(dbc *DatabaseConfig) {
 
 	// Print database
 	for _, x := range mdb.Rows {
-		binIP, _ := hex.DecodeString(x.IP)
-		ipp := net.IP(binIP)
-		fmt.Println(ipp.String(), x.IsHigh)
+		fmt.Println(x.getIP())
 	}
 
 	fmt.Println("Read it all!")
