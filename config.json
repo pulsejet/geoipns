@@ -2,6 +2,16 @@
     "databases": [
         [
             {
+                "file": "intranet.csv",
+                "fields": {
+                    "cidr": "cidr",
+                    "low_ip": "start_ip",
+                    "high_ip": "end_ip",
+                    "location": "location"
+                },
+                "use_loc_map": false
+            },
+            {
                 "file": "GeoLite2-City-Blocks-IPv4.csv",
                 "fields": {
                     "cidr": "network",
