@@ -15,6 +15,7 @@ import (
 
 // Main database
 var dbs []Database
+var asndbs []Database
 var locmap map[string]string
 
 // DatabaseRow epresents a single row in the databse
@@ -32,13 +33,18 @@ func (r DatabaseRow) getIP() (string, error) {
 	return net.IP(bin).String(), nil
 }
 
-func (r DatabaseRow) getResponse(db *Database) string {
+func (r DatabaseRow) getResponse(db *Database, asn string) string {
+	// Lookup location
 	response := ""
 	if db.UseLocMap {
 		response = locmap[r.Location]
 	} else {
 		response = r.Location
 	}
+
+	// Add ASN
+	response += "|" + asn
+
 	return strings.ReplaceAll(response, " ", "_")
 }
 
@@ -121,7 +127,7 @@ func SetupEngine(config *Config) {
 }
 
 // SetupDatabase caches the databse in memory
-func SetupDatabase(dbc *DatabaseConfig) {
+func SetupDatabase(dbc *DatabaseConfig, isAsn bool) {
 	// Initialize
 	mdb := Database{make([]DatabaseRow, 0), dbc.UseLocMap}
 
@@ -220,7 +226,11 @@ func SetupDatabase(dbc *DatabaseConfig) {
 	sort.Sort(mdb)
 
 	// Add database to databases
-	dbs = append(dbs, mdb)
+	if isAsn {
+		asndbs = append(asndbs, mdb)
+	} else {
+		dbs = append(dbs, mdb)
+	}
 
 	// Print database
 	for _, x := range mdb.Rows {
@@ -250,7 +260,17 @@ func GeoHandle(ipstr string) string {
 	for _, db := range dbs {
 		row, err := db.Lookup(hexIP)
 		if err == nil {
-			return row.getResponse(&db)
+			// Lookup ASN, defaulting to blank
+			asn := ""
+			for _, asndb := range asndbs {
+				asnrow, aerr := asndb.Lookup(hexIP)
+				if aerr == nil {
+					asn = asnrow.Location
+					break
+				}
+			}
+
+			return row.getResponse(&db, asn)
 		}
 	}
 

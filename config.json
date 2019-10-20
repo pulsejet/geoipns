@@ -17,7 +17,16 @@
             "use_loc_map": false
         }
     ],
+    "asn_databases": [
+        {
+            "file": "GeoLite2-ASN-Blocks-IPv4.csv",
+            "fields": {
+                "cidr": "network",
+                "location": "autonomous_system_organization"
+            }
+        }
+    ],
     "location_file": "locations.csv",
     "location_file_key": "geoname_id",
-    "location_file_field": ["city_name", "subdivision_1_name", "country_name"]
+    "location_file_field": ["city_name", "subdivision_1_iso_code", "country_iso_code"]
 }
