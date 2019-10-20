@@ -14,8 +14,7 @@ import (
 )
 
 // Main database
-var dbs []Database
-var asndbs []Database
+var dbs [][]Database
 var locmap map[string]string
 
 // DatabaseRow epresents a single row in the databse
@@ -33,7 +32,7 @@ func (r DatabaseRow) getIP() (string, error) {
 	return net.IP(bin).String(), nil
 }
 
-func (r DatabaseRow) getResponse(db *Database, asn string) string {
+func (r DatabaseRow) getResponse(db *Database) string {
 	// Lookup location
 	response := ""
 	if db.UseLocMap {
@@ -41,9 +40,6 @@ func (r DatabaseRow) getResponse(db *Database, asn string) string {
 	} else {
 		response = r.Location
 	}
-
-	// Add ASN
-	response += "|" + asn
 
 	return strings.ReplaceAll(response, " ", "_")
 }
@@ -122,12 +118,12 @@ type dbFieldIndex struct {
 
 // SetupEngine initializes the engine
 func SetupEngine(config *Config) {
-	dbs = make([]Database, 0)
+	dbs = make([][]Database, 0)
 	locmap = initializeLocationMap(config)
 }
 
 // SetupDatabase caches the databse in memory
-func SetupDatabase(dbc *DatabaseConfig, isAsn bool) {
+func SetupDatabase(dbc *DatabaseConfig, index int) {
 	// Initialize
 	mdb := Database{make([]DatabaseRow, 0), dbc.UseLocMap}
 
@@ -226,11 +222,10 @@ func SetupDatabase(dbc *DatabaseConfig, isAsn bool) {
 	sort.Sort(mdb)
 
 	// Add database to databases
-	if isAsn {
-		asndbs = append(asndbs, mdb)
-	} else {
-		dbs = append(dbs, mdb)
+	if len(dbs) <= index {
+		dbs = append(dbs, make([]Database, 0))
 	}
+	dbs[index] = append(dbs[index], mdb)
 
 	// Print database
 	for _, x := range mdb.Rows {
@@ -257,23 +252,17 @@ func GeoHandle(ipstr string) string {
 	hexIP := hex.EncodeToString(ip.To16())
 
 	// Lookup all databases
-	for _, db := range dbs {
-		row, err := db.Lookup(hexIP)
-		if err == nil {
-			// Lookup ASN, defaulting to blank
-			asn := ""
-			for _, asndb := range asndbs {
-				asnrow, aerr := asndb.Lookup(hexIP)
-				if aerr == nil {
-					asn = asnrow.Location
-					break
-				}
+	response := ""
+	for _, dbl := range dbs {
+		for _, db := range dbl {
+			row, err := db.Lookup(hexIP)
+			if err == nil {
+				response += row.getResponse(&db)
+				break
 			}
-
-			return row.getResponse(&db, asn)
 		}
+		response += "|"
 	}
 
-	// Fallback
-	return unknownResponse()
+	return response + "S"
 }

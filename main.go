@@ -12,8 +12,7 @@ import (
 
 // Config is the configuration format
 type Config struct {
-	Databases    []DatabaseConfig `json:"databases"`
-	ASNDatabases []DatabaseConfig `json:"asn_databases"`
+	Databases [][]DatabaseConfig `json:"databases"`
 
 	LocationFile      string   `json:"location_file"`
 	LocationFileField []string `json:"location_file_field"`
@@ -36,13 +35,10 @@ func main() {
 	SetupEngine(&config)
 
 	// Get the database into memory
-	for _, dbc := range config.Databases {
-		SetupDatabase(&dbc, false)
-	}
-
-	// Read ASN databases
-	for _, dbc := range config.ASNDatabases {
-		SetupDatabase(&dbc, true)
+	for i, dbcs := range config.Databases {
+		for _, dbc := range dbcs {
+			SetupDatabase(&dbc, i)
+		}
 	}
 
 	// Attach handler function
