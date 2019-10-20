@@ -1,8 +1,8 @@
 package main
 
 import (
+	"bytes"
 	"encoding/csv"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -19,17 +19,9 @@ var locmap map[string]string
 
 // DatabaseRow epresents a single row in the databse
 type DatabaseRow struct {
-	IP       string
+	IP       net.IP
 	IsHigh   bool
 	Location string
-}
-
-func (r DatabaseRow) getIP() (string, error) {
-	bin, err := hex.DecodeString(r.IP)
-	if err != nil {
-		return r.IP, err
-	}
-	return net.IP(bin).String(), nil
 }
 
 func (r DatabaseRow) getResponse(db *Database) string {
@@ -51,14 +43,14 @@ type Database struct {
 }
 
 func (db Database) Len() int           { return len(db.Rows) }
-func (db Database) Less(i, j int) bool { return db.Rows[i].IP < db.Rows[j].IP }
+func (db Database) Less(i, j int) bool { return bytes.Compare(db.Rows[i].IP, db.Rows[j].IP) < 0 }
 func (db Database) Swap(i, j int)      { db.Rows[i], db.Rows[j] = db.Rows[j], db.Rows[i] }
 
 // Lookup the database
-func (db Database) Lookup(hexIP string) (DatabaseRow, error) {
+func (db Database) Lookup(lookupIP net.IP) (DatabaseRow, error) {
 	// Get the index to be inserted at
 	i := sort.Search(db.Len(), func(i int) bool {
-		return db.Rows[i].IP >= hexIP
+		return bytes.Compare(db.Rows[i].IP, lookupIP) >= 0
 	})
 
 	// Tracker for HighIPs encountered
@@ -67,7 +59,7 @@ func (db Database) Lookup(hexIP string) (DatabaseRow, error) {
 	// Check if index matches
 	if i < db.Len() {
 		// Check for immediate match
-		if db.Rows[i].IP == hexIP {
+		if bytes.Compare(db.Rows[i].IP, lookupIP) == 0 {
 			return db.Rows[i], nil
 		}
 
@@ -82,7 +74,7 @@ func (db Database) Lookup(hexIP string) (DatabaseRow, error) {
 			row := db.Rows[i-j]
 
 			// Check if IP matches or unbalanced LowIP
-			if row.IP == hexIP || (!row.IsHigh && numHigh <= 0) {
+			if bytes.Compare(row.IP, lookupIP) == 0 || (!row.IsHigh && numHigh <= 0) {
 				return row, nil
 			}
 
@@ -175,8 +167,8 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 		}
 
 		// Start and end IP addresses
-		var lowIP string
-		var highIP string
+		var lowIP net.IP
+		var highIP net.IP
 
 		// Check if CIDR is to be parsed
 		if indices.CIDR == -1 {
@@ -186,8 +178,8 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 				log.Panicln("Failed to parse", record[indices.LowIP], record[indices.HighIP])
 				continue
 			}
-			lowIP = hex.EncodeToString(plowIP.To16())
-			highIP = hex.EncodeToString(phighIP.To16())
+			lowIP = plowIP.To16()
+			highIP = phighIP.To16()
 		} else {
 			// Get CIDR
 			cidr := record[indices.CIDR]
@@ -203,13 +195,13 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 			for i := range n.IP {
 				n.IP[i] &= n.Mask[i]
 			}
-			lowIP = hex.EncodeToString(n.IP.To16())
+			lowIP = n.IP.To16()
 
 			// Get the upper IP
 			for i := range n.IP {
 				n.IP[i] |= ^n.Mask[i]
 			}
-			highIP = hex.EncodeToString(n.IP.To16())
+			highIP = n.IP.To16()
 		}
 
 		// Get low row
@@ -252,13 +244,13 @@ func GeoHandle(ipstr string) string {
 	}
 
 	// Get hexadecimal for lookup
-	hexIP := hex.EncodeToString(ip.To16())
+	lookupIP := ip.To16()
 
 	// Lookup all databases
 	response := ""
 	for _, dbl := range dbs {
 		for _, db := range dbl {
-			row, err := db.Lookup(hexIP)
+			row, err := db.Lookup(lookupIP)
 			if err == nil {
 				response += row.getResponse(&db)
 				break
