@@ -23,16 +23,16 @@ type DatabaseRow struct {
 	IP         *net.IP
 	Complement *net.IP
 	IsHigh     bool
-	Location   string
+	Location   *string
 }
 
 func (r DatabaseRow) getResponse(db *Database) string {
 	// Lookup location
 	response := ""
 	if db.UseLocMap {
-		response = locmap[r.Location]
+		response = locmap[*r.Location]
 	} else {
-		response = r.Location
+		response = *r.Location
 	}
 
 	return strings.ReplaceAll(response, " ", "_")
@@ -216,12 +216,15 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 			highIP = n.IP.To16()
 		}
 
+		// Pointer to location
+		location := record[indices.Location]
+
 		// Get low row
 		lowRow := DatabaseRow{
 			IP:         &lowIP,
 			Complement: &highIP,
 			IsHigh:     false,
-			Location:   record[indices.Location],
+			Location:   &location,
 		}
 		mdb.Rows = append(mdb.Rows, &lowRow)
 
@@ -230,7 +233,7 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 			IP:         &highIP,
 			Complement: &lowIP,
 			IsHigh:     true,
-			Location:   record[indices.Location],
+			Location:   &location,
 		}
 		mdb.Rows = append(mdb.Rows, &highRow)
 	}
