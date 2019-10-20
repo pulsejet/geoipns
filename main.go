@@ -15,6 +15,7 @@ var mConfig Config
 type Config struct {
 	Debug   bool   `json:"debug"`
 	Address string `json:"address"`
+	Suffix  string `json:"suffix"`
 
 	Databases [][]DatabaseConfig `json:"databases"`
 
@@ -45,7 +46,7 @@ func main() {
 	}
 
 	// Attach handler function
-	dns.HandleFunc("location.", handleDNSRequest)
+	dns.HandleFunc(mConfig.Suffix+".", handleDNSRequest)
 
 	// Set up server
 	server := &dns.Server{Addr: mConfig.Address, Net: "udp"}

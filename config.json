@@ -1,6 +1,7 @@
 {
     "debug": true,
     "address": "127.0.0.1:5312",
+    "suffix": "location",
 
     "databases": [
         [

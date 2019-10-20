@@ -20,7 +20,7 @@ func parseQuery(m *dns.Msg) {
 
 			// Get IP
 			replacer := strings.NewReplacer(
-				".location.", "",
+				"."+mConfig.Suffix+".", "",
 				"x", ":",
 				"z", ".")
 			ip := replacer.Replace(q.Name)
