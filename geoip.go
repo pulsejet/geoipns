@@ -147,17 +147,66 @@ func SetupDatabase(dbc *DatabaseConfig) {
 
 	// Print database
 	for _, x := range mdb.Rows {
-		fmt.Println(x.getIP())
+		ipx, _ := x.getIP()
+		fmt.Println(ipx, x.IsHigh)
 	}
 
 	fmt.Println("Read it all!")
 }
 
+func unknownResponse() string {
+	return "UnknownLocation"
+}
+
 // GeoHandle returns ip data
 func GeoHandle(ipstr string) string {
+	// Parse the IP to bytes
 	ip := net.ParseIP(ipstr)
 	if ip == nil {
-		return ipstr
+		return unknownResponse()
 	}
-	return hex.EncodeToString(ip.To16())
+
+	// Get hexadecimal for lookup
+	hexIP := hex.EncodeToString(ip.To16())
+
+	// Lookup all databases
+	for _, db := range dbs {
+		// Get the index to be inserted at
+		i := sort.Search(db.Len(), func(i int) bool {
+			return db.Rows[i].IP >= hexIP
+		})
+
+		// Tracker for HighIPs encountered
+		numHigh := 0
+
+		// Check if index matches
+		if i > 0 && i < db.Len() {
+			// Go back five paces at most
+			for j := 1; j <= 5; j++ {
+				// Look out for invalid calls
+				if i-j < 0 {
+					break
+				}
+
+				// Get the row
+				row := db.Rows[i-j]
+
+				// Check if IP matches or unbalanced LowIP
+				if row.IP == hexIP || (!row.IsHigh && numHigh <= 0) {
+					ips, _ := row.getIP()
+					return ips
+				}
+
+				// Increment counter if high IP
+				if row.IsHigh {
+					numHigh++
+				} else {
+					numHigh--
+				}
+			}
+		}
+	}
+
+	// Fallback
+	return unknownResponse()
 }
