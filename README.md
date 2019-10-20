@@ -1,13 +1,13 @@
-# GeoDNS
+# GeoIP NS
 
-Make TXT queries to get the geolocation and ASN name of an IP address
+Make DNS queries to get the geolocation and ASN name of an IP address
 
 To build and run
 ```
-git clone https://github.com/pulsejet/geodns.git geodns && cd geodns
 go get github.com/miekg/dns
+git clone https://github.com/pulsejet/geoipns.git geoipns && cd geoipns
 go build
-./geodns
+./geoipns
 ```
 
 To query
