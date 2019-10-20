@@ -2,10 +2,12 @@
 
 Make TXT queries to get the geolocation and ASN name of an IP address
 
-To build
+To build and run
 ```
+git clone https://github.com/pulsejet/geolocation-dns.git geodns && cd geodns
 go get github.com/miekg/dns
 go build
+./geodns
 ```
 
 To query
