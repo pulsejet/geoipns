@@ -9,19 +9,21 @@ import (
 	"log"
 	"net"
 	"os"
+	"runtime"
 	"sort"
 	"strings"
 )
 
 // Main database
-var dbs [][]Database
+var dbs [][]*Database
 var locmap map[string]string
 
 // DatabaseRow epresents a single row in the databse
 type DatabaseRow struct {
-	IP       net.IP
-	IsHigh   bool
-	Location string
+	IP         *net.IP
+	Complement *net.IP
+	IsHigh     bool
+	Location   string
 }
 
 func (r DatabaseRow) getResponse(db *Database) string {
@@ -38,19 +40,29 @@ func (r DatabaseRow) getResponse(db *Database) string {
 
 // Database a database of GeoIP
 type Database struct {
-	Rows      []DatabaseRow
+	Rows      []*DatabaseRow
 	UseLocMap bool
 }
 
-func (db Database) Len() int           { return len(db.Rows) }
-func (db Database) Less(i, j int) bool { return bytes.Compare(db.Rows[i].IP, db.Rows[j].IP) < 0 }
-func (db Database) Swap(i, j int)      { db.Rows[i], db.Rows[j] = db.Rows[j], db.Rows[i] }
+func (db Database) Len() int { return len(db.Rows) }
+func (db Database) Less(i, j int) bool {
+	ri, rj := db.Rows[i], db.Rows[j]
+	c := bytes.Compare(*ri.IP, *rj.IP)
+	if c == 0 {
+		if ri.IsHigh != rj.IsHigh {
+			return ri.IsHigh
+		}
+		return bytes.Compare(*ri.Complement, *rj.Complement) > 0
+	}
+	return c < 0
+}
+func (db Database) Swap(i, j int) { db.Rows[i], db.Rows[j] = db.Rows[j], db.Rows[i] }
 
 // Lookup the database
-func (db Database) Lookup(lookupIP net.IP) (DatabaseRow, error) {
+func (db Database) Lookup(lookupIP net.IP) (*DatabaseRow, error) {
 	// Get the index to be inserted at
 	i := sort.Search(db.Len(), func(i int) bool {
-		return bytes.Compare(db.Rows[i].IP, lookupIP) >= 0
+		return bytes.Compare(*db.Rows[i].IP, lookupIP) >= 0
 	})
 
 	// Tracker for HighIPs encountered
@@ -59,7 +71,7 @@ func (db Database) Lookup(lookupIP net.IP) (DatabaseRow, error) {
 	// Check if index matches
 	if i < db.Len() {
 		// Check for immediate match
-		if bytes.Compare(db.Rows[i].IP, lookupIP) == 0 {
+		if bytes.Compare(*db.Rows[i].IP, lookupIP) == 0 {
 			return db.Rows[i], nil
 		}
 
@@ -74,7 +86,7 @@ func (db Database) Lookup(lookupIP net.IP) (DatabaseRow, error) {
 			row := db.Rows[i-j]
 
 			// Check if IP matches or unbalanced LowIP
-			if bytes.Compare(row.IP, lookupIP) == 0 || (!row.IsHigh && numHigh <= 0) {
+			if bytes.Compare(*row.IP, lookupIP) == 0 || (!row.IsHigh && numHigh <= 0) {
 				return row, nil
 			}
 
@@ -87,7 +99,7 @@ func (db Database) Lookup(lookupIP net.IP) (DatabaseRow, error) {
 		}
 	}
 
-	return DatabaseRow{}, errors.New("Not Found")
+	return &DatabaseRow{}, errors.New("Not Found")
 }
 
 // DatabaseConfig is the format of configuration for geoip db
@@ -114,14 +126,14 @@ type dbFieldIndex struct {
 
 // SetupEngine initializes the engine
 func SetupEngine(config *Config) {
-	dbs = make([][]Database, 0)
+	dbs = make([][]*Database, 0)
 	locmap = initializeLocationMap(config)
 }
 
 // SetupDatabase caches the databse in memory
 func SetupDatabase(dbc *DatabaseConfig, index int) {
 	// Initialize
-	mdb := Database{make([]DatabaseRow, 0), dbc.UseLocMap}
+	mdb := Database{make([]*DatabaseRow, 0), dbc.UseLocMap}
 
 	// Indices of fields
 	indices := dbFieldIndex{CIDR: -1, Location: -1}
@@ -206,17 +218,21 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 
 		// Get low row
 		lowRow := DatabaseRow{
-			IP:       lowIP,
-			IsHigh:   false,
-			Location: record[indices.Location],
+			IP:         &lowIP,
+			Complement: &highIP,
+			IsHigh:     false,
+			Location:   record[indices.Location],
 		}
-		mdb.Rows = append(mdb.Rows, lowRow)
+		mdb.Rows = append(mdb.Rows, &lowRow)
 
 		// Get high Row
-		highRow := DatabaseRow(lowRow)
-		highRow.IP = highIP
-		highRow.IsHigh = true
-		mdb.Rows = append(mdb.Rows, highRow)
+		highRow := DatabaseRow{
+			IP:         &highIP,
+			Complement: &lowIP,
+			IsHigh:     true,
+			Location:   record[indices.Location],
+		}
+		mdb.Rows = append(mdb.Rows, &highRow)
 	}
 
 	// Sort the database
@@ -224,9 +240,12 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 
 	// Add database to databases
 	if len(dbs) <= index {
-		dbs = append(dbs, make([]Database, 0))
+		dbs = append(dbs, make([]*Database, 0))
 	}
-	dbs[index] = append(dbs[index], mdb)
+	dbs[index] = append(dbs[index], &mdb)
+
+	// Run garbage collection
+	runtime.GC()
 
 	fmt.Println("Read database", dbc.File)
 }
@@ -252,7 +271,7 @@ func GeoHandle(ipstr string) string {
 		for _, db := range dbl {
 			row, err := db.Lookup(lookupIP)
 			if err == nil {
-				response += row.getResponse(&db)
+				response += row.getResponse(db)
 				break
 			}
 		}
