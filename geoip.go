@@ -108,11 +108,15 @@ type DatabaseConfig struct {
 // DatabaseConfigFields is the format of fields for geoip db
 type DatabaseConfigFields struct {
 	CIDR     string `json:"cidr"`
+	LowIP    string `json:"low_ip"`
+	HighIP   string `json:"high_ip"`
 	Location string `json:"location"`
 }
 
 type dbFieldIndex struct {
 	CIDR     int
+	LowIP    int
+	HighIP   int
 	Location int
 }
 
@@ -151,6 +155,10 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 			indices.CIDR = i
 		case dbc.Fields.Location:
 			indices.Location = i
+		case dbc.Fields.HighIP:
+			indices.HighIP = i
+		case dbc.Fields.Location:
+			indices.LowIP = i
 		}
 	}
 
@@ -172,7 +180,14 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 
 		// Check if CIDR is to be parsed
 		if indices.CIDR == -1 {
-			// TODO: NO CIDR
+			plowIP := net.ParseIP(record[indices.LowIP])
+			phighIP := net.ParseIP(record[indices.HighIP])
+			if plowIP == nil || phighIP == nil {
+				log.Panicln("Failed to parse", record[indices.LowIP], record[indices.HighIP])
+				continue
+			}
+			lowIP = hex.EncodeToString(plowIP.To16())
+			highIP = hex.EncodeToString(phighIP.To16())
 		} else {
 			// Get CIDR
 			cidr := record[indices.CIDR]
