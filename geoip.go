@@ -8,7 +8,26 @@ import (
 	"log"
 	"net"
 	"os"
+	"sort"
 )
+
+// Main database
+var dbs []Database
+
+// DatabaseRow epresents a single row in the databse
+type DatabaseRow struct {
+	IP     string
+	IsHigh bool
+}
+
+// Database a database of GeoIP
+type Database struct {
+	Rows []DatabaseRow
+}
+
+func (a Database) Len() int           { return len(a.Rows) }
+func (a Database) Less(i, j int) bool { return a.Rows[i].IP < a.Rows[j].IP }
+func (a Database) Swap(i, j int)      { a.Rows[i], a.Rows[j] = a.Rows[j], a.Rows[i] }
 
 // DatabaseConfig is the format of configuration for geoip db
 type DatabaseConfig struct {
@@ -25,8 +44,16 @@ type dbFieldIndex struct {
 	CIDR int
 }
 
+// SetupEngine initializes the engine
+func SetupEngine() {
+	dbs = make([]Database, 0)
+}
+
 // SetupDatabase caches the databse in memory
 func SetupDatabase(dbc *DatabaseConfig) {
+	// Initialize
+	mdb := Database{make([]DatabaseRow, 0)}
+
 	// Indices of fields
 	indices := dbFieldIndex{CIDR: -1}
 
@@ -88,14 +115,14 @@ func SetupDatabase(dbc *DatabaseConfig) {
 				n.IP[i] &= n.Mask[i]
 			}
 			lowIP = hex.EncodeToString(n.IP.To16())
+			mdb.Rows = append(mdb.Rows, DatabaseRow{lowIP, false})
 
 			// Get the upper IP
 			for i := range n.IP {
 				n.IP[i] |= ^n.Mask[i]
 			}
 			highIP = hex.EncodeToString(n.IP.To16())
-
-			fmt.Printf("%s to %s\n", lowIP, highIP)
+			mdb.Rows = append(mdb.Rows, DatabaseRow{highIP, true})
 		}
 
 		k++
@@ -104,7 +131,20 @@ func SetupDatabase(dbc *DatabaseConfig) {
 		}
 	}
 
-	fmt.Printf("Read it all!\n")
+	// Sort the database
+	sort.Sort(mdb)
+
+	// Add database to databases
+	dbs = append(dbs, mdb)
+
+	// Print database
+	for _, x := range mdb.Rows {
+		binIP, _ := hex.DecodeString(x.IP)
+		ipp := net.IP(binIP)
+		fmt.Println(ipp.String(), x.IsHigh)
+	}
+
+	fmt.Println("Read it all!")
 }
 
 // GeoHandle returns ip data

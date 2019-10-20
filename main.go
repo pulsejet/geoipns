@@ -27,6 +27,9 @@ func main() {
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	json.Unmarshal(byteValue, &config)
 
+	// Setup Engine
+	SetupEngine()
+
 	// Get the database into memory
 	for _, dbc := range config.Databases {
 		SetupDatabase(&dbc)
