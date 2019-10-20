@@ -3,14 +3,21 @@
         {
             "file": "ipv4.csv",
             "fields": {
-                "cidr": "network"
-            }
+                "cidr": "network",
+                "location": "geoname_id"
+            },
+            "use_loc_map": true
         },
         {
             "file": "ipv6.csv",
             "fields": {
-                "cidr": "network"
-            }
+                "cidr": "network",
+                "location": "geoname_id"
+            },
+            "use_loc_map": false
         }
-    ]
+    ],
+    "location_file": "locations.csv",
+    "location_file_key": "geoname_id",
+    "location_file_field": "country_name"
 }

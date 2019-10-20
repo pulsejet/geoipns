@@ -14,11 +14,13 @@ import (
 
 // Main database
 var dbs []Database
+var locmap map[string]string
 
 // DatabaseRow epresents a single row in the databse
 type DatabaseRow struct {
-	IP     string
-	IsHigh bool
+	IP       string
+	IsHigh   bool
+	Location string
 }
 
 func (r DatabaseRow) getIP() (string, error) {
@@ -29,14 +31,17 @@ func (r DatabaseRow) getIP() (string, error) {
 	return net.IP(bin).String(), nil
 }
 
-func (r DatabaseRow) getResponse() string {
-	ips, _ := r.getIP()
-	return ips
+func (r DatabaseRow) getResponse(db *Database) string {
+	if db.UseLocMap {
+		return locmap[r.Location]
+	}
+	return r.Location
 }
 
 // Database a database of GeoIP
 type Database struct {
-	Rows []DatabaseRow
+	Rows      []DatabaseRow
+	UseLocMap bool
 }
 
 func (db Database) Len() int           { return len(db.Rows) }
@@ -89,31 +94,35 @@ func (db Database) Lookup(hexIP string) (DatabaseRow, error) {
 
 // DatabaseConfig is the format of configuration for geoip db
 type DatabaseConfig struct {
-	File   string               `json:"file"`
-	Fields DatabaseConfigFields `json:"fields"`
+	File      string               `json:"file"`
+	Fields    DatabaseConfigFields `json:"fields"`
+	UseLocMap bool                 `json:"use_loc_map"`
 }
 
 // DatabaseConfigFields is the format of fields for geoip db
 type DatabaseConfigFields struct {
-	CIDR string `json:"cidr"`
+	CIDR     string `json:"cidr"`
+	Location string `json:"location"`
 }
 
 type dbFieldIndex struct {
-	CIDR int
+	CIDR     int
+	Location int
 }
 
 // SetupEngine initializes the engine
-func SetupEngine() {
+func SetupEngine(config *Config) {
 	dbs = make([]Database, 0)
+	locmap = initializeLocationMap(config)
 }
 
 // SetupDatabase caches the databse in memory
 func SetupDatabase(dbc *DatabaseConfig) {
 	// Initialize
-	mdb := Database{make([]DatabaseRow, 0)}
+	mdb := Database{make([]DatabaseRow, 0), dbc.UseLocMap}
 
 	// Indices of fields
-	indices := dbFieldIndex{CIDR: -1}
+	indices := dbFieldIndex{CIDR: -1, Location: -1}
 
 	// Open the file
 	csvfile, err := os.Open(dbc.File)
@@ -134,6 +143,8 @@ func SetupDatabase(dbc *DatabaseConfig) {
 		switch f {
 		case dbc.Fields.CIDR:
 			indices.CIDR = i
+		case dbc.Fields.Location:
+			indices.Location = i
 		}
 	}
 
@@ -142,7 +153,7 @@ func SetupDatabase(dbc *DatabaseConfig) {
 		// Read record
 		record, err := r.Read()
 
-		// Check i file ended
+		// Check if file ended
 		if err == io.EOF {
 			break
 		}
@@ -173,15 +184,27 @@ func SetupDatabase(dbc *DatabaseConfig) {
 				n.IP[i] &= n.Mask[i]
 			}
 			lowIP = hex.EncodeToString(n.IP.To16())
-			mdb.Rows = append(mdb.Rows, DatabaseRow{lowIP, false})
 
 			// Get the upper IP
 			for i := range n.IP {
 				n.IP[i] |= ^n.Mask[i]
 			}
 			highIP = hex.EncodeToString(n.IP.To16())
-			mdb.Rows = append(mdb.Rows, DatabaseRow{highIP, true})
 		}
+
+		// Get low row
+		lowRow := DatabaseRow{
+			IP:       lowIP,
+			IsHigh:   false,
+			Location: record[indices.Location],
+		}
+		mdb.Rows = append(mdb.Rows, lowRow)
+
+		// Get high Row
+		highRow := DatabaseRow(lowRow)
+		highRow.IP = highIP
+		highRow.IsHigh = true
+		mdb.Rows = append(mdb.Rows, highRow)
 
 		k++
 		if k > 4 {
@@ -198,7 +221,7 @@ func SetupDatabase(dbc *DatabaseConfig) {
 	// Print database
 	for _, x := range mdb.Rows {
 		ipx, _ := x.getIP()
-		fmt.Println(ipx, x.IsHigh)
+		fmt.Println(ipx, x.IsHigh, x.Location)
 	}
 
 	fmt.Println("Read it all!")
@@ -223,7 +246,7 @@ func GeoHandle(ipstr string) string {
 	for _, db := range dbs {
 		row, err := db.Lookup(hexIP)
 		if err == nil {
-			return row.getResponse()
+			return row.getResponse(&db)
 		}
 	}
 

@@ -12,7 +12,10 @@ import (
 
 // Config is the configuration format
 type Config struct {
-	Databases []DatabaseConfig `json:"databases"`
+	Databases         []DatabaseConfig `json:"databases"`
+	LocationFile      string           `json:"location_file"`
+	LocationFileField string           `json:"location_file_field"`
+	LocationFileKey   string           `json:"location_file_key"`
 }
 
 func main() {
@@ -28,7 +31,7 @@ func main() {
 	json.Unmarshal(byteValue, &config)
 
 	// Setup Engine
-	SetupEngine()
+	SetupEngine(&config)
 
 	// Get the database into memory
 	for _, dbc := range config.Databases {
