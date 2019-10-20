@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -38,9 +39,53 @@ type Database struct {
 	Rows []DatabaseRow
 }
 
-func (a Database) Len() int           { return len(a.Rows) }
-func (a Database) Less(i, j int) bool { return a.Rows[i].IP < a.Rows[j].IP }
-func (a Database) Swap(i, j int)      { a.Rows[i], a.Rows[j] = a.Rows[j], a.Rows[i] }
+func (db Database) Len() int           { return len(db.Rows) }
+func (db Database) Less(i, j int) bool { return db.Rows[i].IP < db.Rows[j].IP }
+func (db Database) Swap(i, j int)      { db.Rows[i], db.Rows[j] = db.Rows[j], db.Rows[i] }
+
+// Lookup the database
+func (db Database) Lookup(hexIP string) (DatabaseRow, error) {
+	// Get the index to be inserted at
+	i := sort.Search(db.Len(), func(i int) bool {
+		return db.Rows[i].IP >= hexIP
+	})
+
+	// Tracker for HighIPs encountered
+	numHigh := 0
+
+	// Check if index matches
+	if i < db.Len() {
+		// Check for immediate match
+		if db.Rows[i].IP == hexIP {
+			return db.Rows[i], nil
+		}
+
+		// Go back five paces at most
+		for j := 1; j <= 5; j++ {
+			// Look out for invalid calls
+			if i-j < 0 {
+				break
+			}
+
+			// Get the row
+			row := db.Rows[i-j]
+
+			// Check if IP matches or unbalanced LowIP
+			if row.IP == hexIP || (!row.IsHigh && numHigh <= 0) {
+				return row, nil
+			}
+
+			// Increment counter if high IP
+			if row.IsHigh {
+				numHigh++
+			} else {
+				numHigh--
+			}
+		}
+	}
+
+	return DatabaseRow{}, errors.New("Not Found")
+}
 
 // DatabaseConfig is the format of configuration for geoip db
 type DatabaseConfig struct {
@@ -176,42 +221,9 @@ func GeoHandle(ipstr string) string {
 
 	// Lookup all databases
 	for _, db := range dbs {
-		// Get the index to be inserted at
-		i := sort.Search(db.Len(), func(i int) bool {
-			return db.Rows[i].IP >= hexIP
-		})
-
-		// Tracker for HighIPs encountered
-		numHigh := 0
-		// Check if index matches
-		if i < db.Len() {
-			// Check for immediate match
-			if db.Rows[i].IP == hexIP {
-				return db.Rows[i].getResponse()
-			}
-
-			// Go back five paces at most
-			for j := 1; j <= 5; j++ {
-				// Look out for invalid calls
-				if i-j < 0 {
-					break
-				}
-
-				// Get the row
-				row := db.Rows[i-j]
-
-				// Check if IP matches or unbalanced LowIP
-				if row.IP == hexIP || (!row.IsHigh && numHigh <= 0) {
-					return row.getResponse()
-				}
-
-				// Increment counter if high IP
-				if row.IsHigh {
-					numHigh++
-				} else {
-					numHigh--
-				}
-			}
+		row, err := db.Lookup(hexIP)
+		if err == nil {
+			return row.getResponse()
 		}
 	}
 
