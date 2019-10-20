@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/miekg/dns"
 )
@@ -14,7 +13,8 @@ var mConfig Config
 
 // Config is the configuration format
 type Config struct {
-	Debug bool `json:"debug"`
+	Debug   bool   `json:"debug"`
+	Address string `json:"address"`
 
 	Databases [][]DatabaseConfig `json:"databases"`
 
@@ -48,11 +48,10 @@ func main() {
 	dns.HandleFunc("location.", handleDNSRequest)
 
 	// Set up server
-	port := 5312
-	server := &dns.Server{Addr: "127.0.0.1:" + strconv.Itoa(port), Net: "udp"}
+	server := &dns.Server{Addr: mConfig.Address, Net: "udp"}
 
 	// Log that we are starting server
-	log.Printf("Starting Geolocation DNS server at %d\n", port)
+	log.Println("Starting Geolocation DNS server at", mConfig.Address)
 
 	// Start listening
 	err = server.ListenAndServe()
