@@ -42,3 +42,6 @@ will return
 ;; WHEN: Sun Oct 20 17:45:30 IST 2019
 ;; MSG SIZE  rcvd: 97
 ```
+
+# Testing
+Use `go test` to run automated tests.

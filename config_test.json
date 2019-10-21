@@ -1,0 +1,41 @@
+{
+    "debug": true,
+    "address": "127.0.0.1:5312",
+    "suffix": "location",
+
+    "databases": [
+        [
+            {
+                "file": "intranet.csv",
+                "fields": {
+                    "cidr": "cidr",
+                    "low_ip": "start_ip",
+                    "high_ip": "end_ip",
+                    "location": "location"
+                },
+                "use_loc_map": false
+            },
+            {
+                "file": "intranet_2.csv",
+                "fields": {
+                    "cidr": "cidr",
+                    "location": "location"
+                },
+                "use_loc_map": true
+            }
+        ],
+        [
+            {
+                "file": "intranet_asn.csv",
+                "fields": {
+                    "cidr": "cidr",
+                    "location": "asn"
+                },
+                "use_loc_map": false
+            }
+        ]
+    ],
+    "location_file": "intranet_locations.csv",
+    "location_file_key": "id",
+    "location_file_field": ["name", "area"]
+}

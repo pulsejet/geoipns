@@ -9,6 +9,12 @@ import (
 
 func initializeLocationMap(config *Config) map[string]string {
 	lmap := map[string]string{}
+
+	// Check if configuration present
+	if config.LocationFile == "" {
+		return lmap
+	}
+
 	// Open the file
 	csvfile, err := os.Open(config.LocationFile)
 	if err != nil {

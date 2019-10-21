@@ -24,9 +24,10 @@ type Config struct {
 	LocationFileKey   string   `json:"location_file_key"`
 }
 
-func main() {
+// SetupEnvironment loads conig and initializes databases
+func SetupEnvironment(configFile string) {
 	// Open config file
-	jsonFile, err := os.Open("config.json")
+	jsonFile, err := os.Open(configFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,6 +45,11 @@ func main() {
 			SetupDatabase(&dbc, i)
 		}
 	}
+}
+
+func main() {
+	// Set everything up
+	SetupEnvironment("config.json")
 
 	// Attach handler function
 	dns.HandleFunc(mConfig.Suffix+".", handleDNSRequest)
@@ -55,7 +61,7 @@ func main() {
 	log.Println("Starting Geolocation DNS server at", mConfig.Address)
 
 	// Start listening
-	err = server.ListenAndServe()
+	err := server.ListenAndServe()
 
 	// Shutdown when done
 	defer server.Shutdown()
