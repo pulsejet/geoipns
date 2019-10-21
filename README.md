@@ -8,7 +8,7 @@ Make DNS queries to get the geolocation and ASN name of an IP address
 
 ## Usage
 
-Make a `TXT` query for `ip.location` to the server to get the response in the format `city,_province,_country|my_asn_name|S`
+Make a `TXT` query for `IP.geoipns` to the server to get the location and ASN name of `IP` in an [RFC 1464](https://tools.ietf.org/html/rfc1464) compliant format. The model can be easily extended to store arbitrary data about IP subnets using the configuration file.
 
 To build and run
 ```
@@ -21,31 +21,32 @@ go build
 
 To query
 ```
-dig @localhost -p5312 -tTXT 103.21.125.84.location
+dig @localhost -p5312 -tTXT 3.105.177.255.geoipns
 ```
 
 will return
 
 ```
-; <<>> DiG 9.11.3-1ubuntu1.7-Ubuntu <<>> @localhost -p5312 -tTXT 103.21.125.84.location
+; <<>> DiG 9.11.3-1ubuntu1.7-Ubuntu <<>> @localhost -p5312 -tTXT 3.105.177.255.geoipns
 ; (1 server found)
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 3009
-;; flags: qr rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 40194
+;; flags: qr rd; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 0
 ;; WARNING: recursion requested but not available
 
 ;; QUESTION SECTION:
-;103.21.125.84.location.                IN      TXT
+;3.105.177.255.geoipns.         IN      TXT
 
 ;; ANSWER SECTION:
-103.21.125.84.location. 3600    IN      TXT     "Mumbai,_MH,_IN|Powai|S"
+3.105.177.255.geoipns.  3600    IN      TXT     "location=Sydney, NSW, AU"
+3.105.177.255.geoipns.  3600    IN      TXT     "asn=Amazon.com, Inc."
 
 ;; Query time: 0 msec
 ;; SERVER: 127.0.0.1#5312(127.0.0.1)
-;; WHEN: Sun Oct 20 17:45:30 IST 2019
-;; MSG SIZE  rcvd: 97
+;; WHEN: Mon Oct 21 19:13:20 IST 2019
+;; MSG SIZE  rcvd: 151
 ```
 
-# Testing
+## Testing
 Use `go test -v ./...` to run automated tests.
