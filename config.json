@@ -6,7 +6,7 @@
     "databases": [
         [
             {
-                "file": "test/intranet.csv",
+                "file": "geoip/test/intranet.csv",
                 "fields": {
                     "cidr": "cidr",
                     "low_ip": "start_ip",
