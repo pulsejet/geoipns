@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/csv"
-	"fmt"
 	"io"
 	"log"
 	"net"
@@ -254,8 +253,6 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 
 	// Run garbage collection
 	runtime.GC()
-
-	fmt.Println("Read database", dbc.File)
 }
 
 func unknownResponse() string {
