@@ -28,10 +28,10 @@ type DatabaseConfig struct {
 
 // DatabaseConfigFields is the format of fields for geoip db
 type DatabaseConfigFields struct {
-	CIDR     string `json:"cidr"`
-	LowIP    string `json:"low_ip"`
-	HighIP   string `json:"high_ip"`
-	Location string `json:"location"`
+	CIDR   string `json:"cidr"`
+	LowIP  string `json:"low_ip"`
+	HighIP string `json:"high_ip"`
+	Data   string `json:"data"`
 }
 
 // DatabaseSet a set of databases of GeoIP
@@ -51,13 +51,13 @@ type DatabaseRow struct {
 	IP         *net.IP
 	Complement *net.IP
 	IsHigh     bool
-	Location   *string
+	Data       *string
 	Parent     *DatabaseRow
 }
 
 type dbFieldIndex struct {
-	CIDR     int
-	LowIP    int
-	HighIP   int
-	Location int
+	CIDR   int
+	LowIP  int
+	HighIP int
+	Data   int
 }

@@ -11,7 +11,7 @@
                     "cidr": "cidr",
                     "low_ip": "start_ip",
                     "high_ip": "end_ip",
-                    "location": "location"
+                    "data": "location"
                 },
                 "use_hashmap": false
             },
@@ -19,7 +19,7 @@
                 "file": "test/intranet_2.csv",
                 "fields": {
                     "cidr": "cidr",
-                    "location": "location"
+                    "data": "location"
                 },
                 "use_hashmap": true
             }
@@ -29,7 +29,7 @@
                 "file": "test/intranet_asn.csv",
                 "fields": {
                     "cidr": "cidr",
-                    "location": "asn"
+                    "data": "asn"
                 },
                 "use_hashmap": false
             }

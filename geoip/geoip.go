@@ -18,11 +18,11 @@ var databaseSets []*DatabaseSet
 var hashMap map[string]string
 
 func (r DatabaseRow) getResponse(db *Database) string {
-	// Lookup location
+	// Lookup data
 	if db.UseHashMap {
-		return hashMap[*r.Location]
+		return hashMap[*r.Data]
 	}
-	return *r.Location
+	return *r.Data
 }
 
 func (db Database) Len() int { return len(db.Rows) }
@@ -89,7 +89,7 @@ func setupDatabase(dbc *DatabaseConfig) *Database {
 	mdb := &Database{make([]*DatabaseRow, 0), dbc.UseHashMap}
 
 	// Indices of fields
-	indices := dbFieldIndex{CIDR: -1, Location: -1}
+	indices := dbFieldIndex{CIDR: -1, Data: -1}
 
 	// Open the file
 	csvfile, err := os.Open(dbc.File)
@@ -110,8 +110,8 @@ func setupDatabase(dbc *DatabaseConfig) *Database {
 		switch f {
 		case dbc.Fields.CIDR:
 			indices.CIDR = i
-		case dbc.Fields.Location:
-			indices.Location = i
+		case dbc.Fields.Data:
+			indices.Data = i
 		case dbc.Fields.HighIP:
 			indices.HighIP = i
 		case dbc.Fields.LowIP:
@@ -174,15 +174,15 @@ func setupDatabase(dbc *DatabaseConfig) *Database {
 			highIP = n.IP.To16()
 		}
 
-		// Pointer to location
-		location := record[indices.Location]
+		// Pointer to data
+		data := record[indices.Data]
 
 		// Get low row
 		lowRow := DatabaseRow{
 			IP:         &lowIP,
 			Complement: &highIP,
 			IsHigh:     false,
-			Location:   &location,
+			Data:   &data,
 		}
 		mdb.Rows = append(mdb.Rows, &lowRow)
 
@@ -191,7 +191,7 @@ func setupDatabase(dbc *DatabaseConfig) *Database {
 			IP:         &highIP,
 			Complement: &lowIP,
 			IsHigh:     true,
-			Location:   &location,
+			Data:   &data,
 		}
 		mdb.Rows = append(mdb.Rows, &highRow)
 	}

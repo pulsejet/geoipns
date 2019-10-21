@@ -58,7 +58,7 @@ func initializeHashMap(config *Config) map[string]string {
 			log.Fatal(err)
 		}
 
-		// Get location
+		// Get data
 		val := ""
 		for _, i := range indices {
 			if i != -1 && record[i] != "" {
