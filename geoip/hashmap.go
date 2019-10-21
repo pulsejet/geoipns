@@ -7,8 +7,8 @@ import (
 	"os"
 )
 
-func initializeHashMap(config *Config) map[string]string {
-	hm := map[string]string{}
+func initializeHashMap(config *Config) map[string]*string {
+	hm := map[string]*string{}
 
 	// Check if configuration present
 	if config.HashMapFile == "" {
@@ -69,7 +69,7 @@ func initializeHashMap(config *Config) map[string]string {
 				}
 			}
 		}
-		hm[record[keyIndex]] = val
+		hm[record[keyIndex]] = &val
 	}
 
 	return hm
