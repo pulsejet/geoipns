@@ -3,6 +3,7 @@ package geoip
 import (
 	"bytes"
 	"encoding/csv"
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -13,19 +14,15 @@ import (
 )
 
 // Main database
-var dbs [][]*Database
+var databaseSets []*DatabaseSet
 var locmap map[string]string
 
 func (r DatabaseRow) getResponse(db *Database) string {
 	// Lookup location
-	response := ""
 	if db.UseLocMap {
-		response = locmap[*r.Location]
-	} else {
-		response = *r.Location
+		return locmap[*r.Location]
 	}
-
-	return strings.ReplaceAll(response, " ", "_")
+	return *r.Location
 }
 
 func (db Database) Len() int { return len(db.Rows) }
@@ -69,21 +66,27 @@ func (db Database) Lookup(lookupIP net.IP) *DatabaseRow {
 
 // SetupEngine initializes the engine
 func SetupEngine(config *Config) {
-	dbs = make([][]*Database, 0)
+	databaseSets = make([]*DatabaseSet, 0)
 	locmap = initializeLocationMap(config)
 
 	// Get the database into memory
-	for i, dbcs := range config.Databases {
-		for _, dbc := range dbcs {
-			setupDatabase(&dbc, i)
+	for _, dbcs := range config.DatabaseSets {
+		// Create new database set
+		dbset := &DatabaseSet{AttributeName: dbcs.AttributeName}
+		databaseSets = append(databaseSets, dbset)
+
+		// Add each database to the set
+		for _, dbc := range dbcs.Databases {
+			mdb := setupDatabase(&dbc)
+			dbset.Databases = append(dbset.Databases, mdb)
 		}
 	}
 }
 
 // setupDatabase caches the databse in memory
-func setupDatabase(dbc *DatabaseConfig, index int) {
+func setupDatabase(dbc *DatabaseConfig) *Database {
 	// Initialize
-	mdb := Database{make([]*DatabaseRow, 0), dbc.UseLocMap}
+	mdb := &Database{make([]*DatabaseRow, 0), dbc.UseLocMap}
 
 	// Indices of fields
 	indices := dbFieldIndex{CIDR: -1, Location: -1}
@@ -215,43 +218,37 @@ func setupDatabase(dbc *DatabaseConfig, index int) {
 		}
 	}
 
-	// Add database to databases
-	if len(dbs) <= index {
-		dbs = append(dbs, make([]*Database, 0))
-	}
-	dbs[index] = append(dbs[index], &mdb)
-
 	// Run garbage collection
 	runtime.GC()
-}
 
-func unknownResponse() string {
-	return "UnknownLocation"
+	return mdb
 }
 
 // GeoHandle returns ip data
-func GeoHandle(ipstr string) string {
+func GeoHandle(ipstr string) []string {
 	// Parse the IP to bytes
 	ip := net.ParseIP(ipstr)
 	if ip == nil {
-		return unknownResponse()
+		return nil
 	}
 
 	// Get hexadecimal for lookup
 	lookupIP := ip.To16()
 
 	// Lookup all databases
-	response := ""
-	for _, dbl := range dbs {
-		for _, db := range dbl {
+	answer := make([]string, 0)
+	for _, dbSet := range databaseSets {
+		for _, db := range dbSet.Databases {
 			row := db.Lookup(lookupIP)
 			if row != nil {
-				response += row.getResponse(db)
+				replacer := strings.NewReplacer(
+					"\\", "\\\\", "=", "\\=", "\"", "\\\"")
+				response := fmt.Sprintf("%s=%s", dbSet.AttributeName, replacer.Replace(row.getResponse(db)))
+				answer = append(answer, response)
 				break
 			}
 		}
-		response += "|"
 	}
 
-	return response + "S"
+	return answer
 }

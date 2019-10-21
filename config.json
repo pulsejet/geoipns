@@ -3,53 +3,58 @@
     "address": "127.0.0.1:5312",
     "suffix": "location",
 
-    "databases": [
-        [
-            {
-                "file": "geoip/test/intranet.csv",
-                "fields": {
-                    "cidr": "cidr",
-                    "low_ip": "start_ip",
-                    "high_ip": "end_ip",
-                    "location": "location"
+    "database_sets": [
+        {
+            "attribute_name": "location",
+            "databases": [
+                {
+                    "file": "geoip/test/intranet.csv",
+                    "fields": {
+                        "cidr": "cidr",
+                        "low_ip": "start_ip",
+                        "high_ip": "end_ip",
+                        "location": "location"
+                    },
+                    "use_loc_map": false
                 },
-                "use_loc_map": false
-            },
-            {
-                "file": "data/GeoLite2-City-Blocks-IPv4.csv",
-                "fields": {
-                    "cidr": "network",
-                    "location": "geoname_id"
+                {
+                    "file": "data/GeoLite2-City-Blocks-IPv4.csv",
+                    "fields": {
+                        "cidr": "network",
+                        "location": "geoname_id"
+                    },
+                    "use_loc_map": true
                 },
-                "use_loc_map": true
-            },
-            {
-                "file": "data/GeoLite2-City-Blocks-IPv6.csv",
-                "fields": {
-                    "cidr": "network",
-                    "location": "geoname_id"
+                {
+                    "file": "data/GeoLite2-City-Blocks-IPv6.csv",
+                    "fields": {
+                        "cidr": "network",
+                        "location": "geoname_id"
+                    },
+                    "use_loc_map": true
+                }
+            ]
+        },
+        {
+            "attribute_name": "asn",
+            "databases": [{
+                    "file": "data/GeoLite2-ASN-Blocks-IPv4.csv",
+                    "fields": {
+                        "cidr": "network",
+                        "location": "autonomous_system_organization"
+                    },
+                    "use_loc_map": false
                 },
-                "use_loc_map": true
-            }
-        ],
-        [
-            {
-                "file": "data/GeoLite2-ASN-Blocks-IPv4.csv",
-                "fields": {
-                    "cidr": "network",
-                    "location": "autonomous_system_organization"
-                },
-                "use_loc_map": false
-            },
-            {
-                "file": "data/GeoLite2-ASN-Blocks-IPv6.csv",
-                "fields": {
-                    "cidr": "network",
-                    "location": "autonomous_system_organization"
-                },
-                "use_loc_map": false
-            }
-        ]
+                {
+                    "file": "data/GeoLite2-ASN-Blocks-IPv6.csv",
+                    "fields": {
+                        "cidr": "network",
+                        "location": "autonomous_system_organization"
+                    },
+                    "use_loc_map": false
+                }
+            ]
+        }
     ],
     "location_file": "data/GeoLite2-City-Locations-en.csv",
     "location_file_key": "geoname_id",

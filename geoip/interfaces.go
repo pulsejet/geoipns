@@ -6,11 +6,17 @@ import "net"
 type Config struct {
 	Debug bool `json:"debug"`
 
-	Databases [][]DatabaseConfig `json:"databases"`
+	DatabaseSets []DatabaseConfigSet `json:"database_sets"`
 
 	LocationFile      string   `json:"location_file"`
 	LocationFileField []string `json:"location_file_field"`
 	LocationFileKey   string   `json:"location_file_key"`
+}
+
+// DatabaseConfigSet is a set of databases that provide one answer record
+type DatabaseConfigSet struct {
+	AttributeName string           `json:"attribute_name"`
+	Databases     []DatabaseConfig `json:"databases"`
 }
 
 // DatabaseConfig is the format of configuration for geoip db
@@ -26,6 +32,12 @@ type DatabaseConfigFields struct {
 	LowIP    string `json:"low_ip"`
 	HighIP   string `json:"high_ip"`
 	Location string `json:"location"`
+}
+
+// Database a set of databases of GeoIP
+type DatabaseSet struct {
+	AttributeName string
+	Databases     []*Database
 }
 
 // Database a database of GeoIP
