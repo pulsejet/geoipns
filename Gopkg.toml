@@ -1,0 +1,12 @@
+# Gopkg.toml
+#
+# Refer to https://golang.github.io/dep/docs/Gopkg.toml.html
+# for detailed Gopkg.toml documentation.
+
+[[constraint]]
+  name = "github.com/miekg/dns"
+  version = "1.1.22"
+
+[prune]
+  go-tests = true
+  unused-packages = true
