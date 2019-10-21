@@ -15,13 +15,13 @@ type GeoHandleTestCase struct {
 }
 
 func TestGeoHandle(t *testing.T) {
-	SetupEnvironment("config_test.json")
+	SetupEnvironment("test/config_test.json")
 
 	// Test cases to run
 	var cases []GeoHandleTestCase
 
 	// Open config file
-	jsonFile, err := os.Open("intranet_tests.json")
+	jsonFile, err := os.Open("test/intranet_tests.json")
 	if err != nil {
 		log.Fatal(err)
 	}

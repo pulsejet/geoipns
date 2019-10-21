@@ -6,7 +6,7 @@
     "databases": [
         [
             {
-                "file": "intranet.csv",
+                "file": "test/intranet.csv",
                 "fields": {
                     "cidr": "cidr",
                     "low_ip": "start_ip",
@@ -16,7 +16,7 @@
                 "use_loc_map": false
             },
             {
-                "file": "intranet_2.csv",
+                "file": "test/intranet_2.csv",
                 "fields": {
                     "cidr": "cidr",
                     "location": "location"
@@ -26,7 +26,7 @@
         ],
         [
             {
-                "file": "intranet_asn.csv",
+                "file": "test/intranet_asn.csv",
                 "fields": {
                     "cidr": "cidr",
                     "location": "asn"
@@ -35,7 +35,7 @@
             }
         ]
     ],
-    "location_file": "intranet_locations.csv",
+    "location_file": "test/intranet_locations.csv",
     "location_file_key": "id",
     "location_file_field": ["name", "area"]
 }
