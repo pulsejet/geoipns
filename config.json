@@ -6,7 +6,7 @@
     "databases": [
         [
             {
-                "file": "intranet.csv",
+                "file": "test/intranet.csv",
                 "fields": {
                     "cidr": "cidr",
                     "low_ip": "start_ip",
@@ -16,7 +16,7 @@
                 "use_loc_map": false
             },
             {
-                "file": "GeoLite2-City-Blocks-IPv4.csv",
+                "file": "data/GeoLite2-City-Blocks-IPv4.csv",
                 "fields": {
                     "cidr": "network",
                     "location": "geoname_id"
@@ -24,7 +24,7 @@
                 "use_loc_map": true
             },
             {
-                "file": "GeoLite2-City-Blocks-IPv6.csv",
+                "file": "data/GeoLite2-City-Blocks-IPv6.csv",
                 "fields": {
                     "cidr": "network",
                     "location": "geoname_id"
@@ -34,7 +34,7 @@
         ],
         [
             {
-                "file": "GeoLite2-ASN-Blocks-IPv4.csv",
+                "file": "data/GeoLite2-ASN-Blocks-IPv4.csv",
                 "fields": {
                     "cidr": "network",
                     "location": "autonomous_system_organization"
@@ -42,7 +42,7 @@
                 "use_loc_map": false
             },
             {
-                "file": "GeoLite2-ASN-Blocks-IPv6.csv",
+                "file": "data/GeoLite2-ASN-Blocks-IPv6.csv",
                 "fields": {
                     "cidr": "network",
                     "location": "autonomous_system_organization"
@@ -51,7 +51,7 @@
             }
         ]
     ],
-    "location_file": "GeoLite2-City-Locations-en.csv",
+    "location_file": "data/GeoLite2-City-Locations-en.csv",
     "location_file_key": "geoname_id",
     "location_file_field": ["city_name", "subdivision_1_iso_code", "country_iso_code"]
 }

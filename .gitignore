@@ -1,3 +1,2 @@
-*.csv
 *.exe
-!intranet*
+data
