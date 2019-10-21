@@ -28,7 +28,7 @@ func parseQuery(m *dns.Msg) {
 
 			// Send response
 			for _, response := range g.GeoHandle(ip) {
-				rr, err := dns.NewRR(fmt.Sprintf("%s TXT \"%s\"", q.Name, response))
+				rr, err := dns.NewRR(fmt.Sprintf("%s 1 TXT \"%s\"", q.Name, response))
 				if err == nil {
 					m.Answer = append(m.Answer, rr)
 				}
