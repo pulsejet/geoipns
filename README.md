@@ -4,6 +4,7 @@ Make DNS queries to get the geolocation and ASN name of an IP address
 
 [![Build Status](https://travis-ci.org/pulsejet/geoipns.svg?branch=master)](https://travis-ci.org/pulsejet/geoipns)
 [![codecov](https://codecov.io/gh/pulsejet/geoipns/branch/master/graph/badge.svg)](https://codecov.io/gh/pulsejet/geoipns)
+[![Go Report Card](https://goreportcard.com/badge/github.com/pulsejet/geoipns)](https://goreportcard.com/report/github.com/pulsejet/geoipns)
 [![GitHub license](https://img.shields.io/github/license/pulsejet/geoipns)](https://github.com/pulsejet/geoipns/blob/master/LICENSE)
 
 ## Usage
