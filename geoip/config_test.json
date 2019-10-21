@@ -35,7 +35,7 @@
             }
         ]
     ],
-    "location_file": "test/intranet_locations.csv",
-    "location_file_key": "id",
-    "location_file_field": ["name", "area"]
+    "hashmap_file": "test/intranet_locations.csv",
+    "hashmap_file_key": "id",
+    "hashmap_file_field": ["name", "area"]
 }

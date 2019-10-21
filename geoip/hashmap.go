@@ -11,14 +11,14 @@ func initializeHashMap(config *Config) map[string]string {
 	hm := map[string]string{}
 
 	// Check if configuration present
-	if config.LocationFile == "" {
+	if config.HashMapFile == "" {
 		return hm
 	}
 
 	// Open the file
-	csvfile, err := os.Open(config.LocationFile)
+	csvfile, err := os.Open(config.HashMapFile)
 	if err != nil {
-		log.Fatalln("Couldn't open the csv file", config.LocationFile, err)
+		log.Fatalln("Couldn't open the csv file", config.HashMapFile, err)
 	}
 	defer csvfile.Close()
 
@@ -33,12 +33,12 @@ func initializeHashMap(config *Config) map[string]string {
 
 	// Get indices
 	keyIndex := -1
-	indices := make([]int, len(config.LocationFileField))
+	indices := make([]int, len(config.HashMapFileField))
 	for i, f := range header {
-		if f == config.LocationFileKey {
+		if f == config.HashMapFileKey {
 			keyIndex = i
 		} else {
-			for j, x := range config.LocationFileField {
+			for j, x := range config.HashMapFileField {
 				if x == f {
 					indices[j] = i
 				}

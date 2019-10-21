@@ -8,9 +8,9 @@ type Config struct {
 
 	DatabaseSets []DatabaseConfigSet `json:"database_sets"`
 
-	LocationFile      string   `json:"location_file"`
-	LocationFileField []string `json:"location_file_field"`
-	LocationFileKey   string   `json:"location_file_key"`
+	HashMapFile      string   `json:"hashmap_file"`
+	HashMapFileField []string `json:"hashmap_file_field"`
+	HashMapFileKey   string   `json:"hashmap_file_key"`
 }
 
 // DatabaseConfigSet is a set of databases that provide one answer record

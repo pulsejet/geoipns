@@ -56,7 +56,7 @@
             ]
         }
     ],
-    "location_file": "data/GeoLite2-City-Locations-en.csv",
-    "location_file_key": "geoname_id",
-    "location_file_field": ["city_name", "subdivision_1_iso_code", "country_iso_code"]
+    "hashmap_file": "data/GeoLite2-City-Locations-en.csv",
+    "hashmap_file_key": "geoname_id",
+    "hashmap_file_field": ["city_name", "subdivision_1_iso_code", "country_iso_code"]
 }
