@@ -15,8 +15,13 @@ import (
 
 // Main database
 var databaseSets []*DatabaseSet
+var hashMap map[string]string
 
 func (r DatabaseRow) getResponse(db *Database) string {
+	// Lookup data
+	if db.UseHashMap {
+		return hashMap[*r.Data]
+	}
 	return *r.Data
 }
 
@@ -62,7 +67,7 @@ func (db Database) Lookup(lookupIP net.IP) *DatabaseRow {
 // SetupEngine initializes the engine
 func SetupEngine(config *Config) {
 	databaseSets = make([]*DatabaseSet, 0)
-	hashMap := initializeHashMap(config)
+	hashMap = initializeHashMap(config)
 
 	// Get the database into memory
 	for _, dbcs := range config.DatabaseSets {
@@ -72,20 +77,16 @@ func SetupEngine(config *Config) {
 
 		// Add each database to the set
 		for _, dbc := range dbcs.Databases {
-			mdb := setupDatabase(&dbc, hashMap)
+			mdb := setupDatabase(&dbc)
 			dbset.Databases = append(dbset.Databases, mdb)
 		}
 	}
-
-	// Clear the hashMap
-	hashMap = nil
-	runtime.GC()
 }
 
 // setupDatabase caches the databse in memory
-func setupDatabase(dbc *DatabaseConfig, hashMap map[string]*string) *Database {
+func setupDatabase(dbc *DatabaseConfig) *Database {
 	// Initialize
-	mdb := &Database{make([]*DatabaseRow, 0)}
+	mdb := &Database{make([]*DatabaseRow, 0), dbc.UseHashMap}
 
 	// Indices of fields
 	indices := dbFieldIndex{CIDR: -1, Data: -1}
@@ -175,17 +176,13 @@ func setupDatabase(dbc *DatabaseConfig, hashMap map[string]*string) *Database {
 
 		// Pointer to data
 		data := record[indices.Data]
-		dataptr := &data
-		if dbc.UseHashMap {
-			dataptr = hashMap[data]
-		}
 
 		// Get low row
 		lowRow := DatabaseRow{
 			IP:         &lowIP,
 			Complement: &highIP,
 			IsHigh:     false,
-			Data:       dataptr,
+			Data:   &data,
 		}
 		mdb.Rows = append(mdb.Rows, &lowRow)
 
@@ -194,7 +191,7 @@ func setupDatabase(dbc *DatabaseConfig, hashMap map[string]*string) *Database {
 			IP:         &highIP,
 			Complement: &lowIP,
 			IsHigh:     true,
-			Data:       dataptr,
+			Data:   &data,
 		}
 		mdb.Rows = append(mdb.Rows, &highRow)
 	}

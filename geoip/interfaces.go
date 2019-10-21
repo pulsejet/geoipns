@@ -43,6 +43,7 @@ type DatabaseSet struct {
 // Database a database of GeoIP
 type Database struct {
 	Rows       []*DatabaseRow
+	UseHashMap bool
 }
 
 // DatabaseRow represents a single row in the databse
