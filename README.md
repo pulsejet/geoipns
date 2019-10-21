@@ -8,8 +8,8 @@ Make a `TXT` query for `ip.location` to the server to get the response in the fo
 
 To build and run
 ```
-go get github.com/miekg/dns
-git clone https://github.com/pulsejet/geoipns.git geoipns && cd geoipns
+go get github.com/pulsejet/geoipns && cd $GOPATH/src/github.com/pulsejet/geoipns
+dep ensure
 go build
 ./getdata.sh
 ./geoipns
