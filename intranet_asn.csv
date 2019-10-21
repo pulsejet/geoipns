@@ -1,0 +1,4 @@
+cidr,asn
+10.0.0.0/12,Hostel Provider
+10.196.0.0/12,Wireless
+10.105.177.0/28,LunaSol
