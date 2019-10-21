@@ -1,3 +1,7 @@
-start_ip,end_ip,location
-10.105.0.0,10.105.255.255,Old CSE Building
-10.105.177.0,10.105.177.255,Gymkhana
+cidr,start_ip,end_ip,location
+10.0.0.0/8,,,IITB Intranet
+10.105.0.0/16,,,Old CSE Building
+10.105.177.0/24,,,Gymkhana
+,10.105.177.180,10.105.177.200,Backup Servers
+,10.105.177.120,10.105.177.128,Redis
+,10.105.177.4,10.105.177.4,SMP

@@ -159,16 +159,21 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 			log.Fatal(err)
 		}
 
+		// Trim all space
+		for i, x := range record {
+			record[i] = strings.TrimSpace(x)
+		}
+
 		// Start and end IP addresses
 		var lowIP net.IP
 		var highIP net.IP
 
 		// Check if CIDR is to be parsed
-		if indices.CIDR == -1 {
+		if indices.CIDR == -1 || record[indices.CIDR] == "" {
 			plowIP := net.ParseIP(record[indices.LowIP])
 			phighIP := net.ParseIP(record[indices.HighIP])
 			if plowIP == nil || phighIP == nil {
-				log.Panicln("Failed to parse", record[indices.LowIP], record[indices.HighIP])
+				log.Println("Failed to parse", record[indices.LowIP], record[indices.HighIP])
 				continue
 			}
 			lowIP = plowIP.To16()
