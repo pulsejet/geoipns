@@ -182,7 +182,7 @@ func setupDatabase(dbc *DatabaseConfig) *Database {
 			IP:         &lowIP,
 			Complement: &highIP,
 			IsHigh:     false,
-			Data:   &data,
+			Data:       &data,
 		}
 		mdb.Rows = append(mdb.Rows, &lowRow)
 
@@ -191,7 +191,7 @@ func setupDatabase(dbc *DatabaseConfig) *Database {
 			IP:         &highIP,
 			Complement: &lowIP,
 			IsHigh:     true,
-			Data:   &data,
+			Data:       &data,
 		}
 		mdb.Rows = append(mdb.Rows, &highRow)
 	}
@@ -241,9 +241,7 @@ func GeoHandle(ipstr string) []string {
 		for _, db := range dbSet.Databases {
 			row := db.Lookup(lookupIP)
 			if row != nil {
-				replacer := strings.NewReplacer(
-					"\\", "\\\\", "=", "\\=", "\"", "\\\"")
-				response := fmt.Sprintf("%s=%s", dbSet.AttributeName, replacer.Replace(row.getResponse(db)))
+				response := fmt.Sprintf("%s=%s", dbSet.AttributeName, row.getResponse(db))
 				answer = append(answer, response)
 				break
 			}

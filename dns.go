@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -28,10 +27,15 @@ func parseQuery(m *dns.Msg) {
 
 			// Send response
 			for _, response := range g.GeoHandle(ip) {
-				rr, err := dns.NewRR(fmt.Sprintf("%s 1 TXT \"%s\"", q.Name, response))
-				if err == nil {
-					m.Answer = append(m.Answer, rr)
+				r := new(dns.TXT)
+				r.Hdr = dns.RR_Header{
+					Name:   q.Name,
+					Rrtype: dns.TypeTXT,
+					Class:  dns.ClassINET,
+					Ttl:    1,
 				}
+				r.Txt = []string{response}
+				m.Answer = append(m.Answer, r)
 			}
 		}
 	}
