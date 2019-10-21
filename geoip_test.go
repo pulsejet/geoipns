@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 	"testing"
+
+	g "github.com/pulsejet/geoipns/geoip"
 )
 
 type GeoHandleTestCase struct {
@@ -32,7 +34,7 @@ func TestGeoHandle(t *testing.T) {
 
 	for _, test := range cases {
 		t.Run(fmt.Sprintf("GeoHandle %s", test.IP), func(t *testing.T) {
-			got := GeoHandle(test.IP)
+			got := g.GeoHandle(test.IP)
 			if got != test.Want {
 				t.Errorf("GeoHandle(%s) = %s; want %s", test.IP, got, test.Want)
 			}

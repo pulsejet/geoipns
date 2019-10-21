@@ -1,4 +1,4 @@
-package main
+package geoip
 
 import (
 	"bytes"
@@ -16,15 +16,6 @@ import (
 var dbs [][]*Database
 var locmap map[string]string
 
-// DatabaseRow epresents a single row in the databse
-type DatabaseRow struct {
-	IP         *net.IP
-	Complement *net.IP
-	IsHigh     bool
-	Location   *string
-	Parent     *DatabaseRow
-}
-
 func (r DatabaseRow) getResponse(db *Database) string {
 	// Lookup location
 	response := ""
@@ -35,12 +26,6 @@ func (r DatabaseRow) getResponse(db *Database) string {
 	}
 
 	return strings.ReplaceAll(response, " ", "_")
-}
-
-// Database a database of GeoIP
-type Database struct {
-	Rows      []*DatabaseRow
-	UseLocMap bool
 }
 
 func (db Database) Len() int { return len(db.Rows) }
@@ -82,36 +67,21 @@ func (db Database) Lookup(lookupIP net.IP) *DatabaseRow {
 	return nil
 }
 
-// DatabaseConfig is the format of configuration for geoip db
-type DatabaseConfig struct {
-	File      string               `json:"file"`
-	Fields    DatabaseConfigFields `json:"fields"`
-	UseLocMap bool                 `json:"use_loc_map"`
-}
-
-// DatabaseConfigFields is the format of fields for geoip db
-type DatabaseConfigFields struct {
-	CIDR     string `json:"cidr"`
-	LowIP    string `json:"low_ip"`
-	HighIP   string `json:"high_ip"`
-	Location string `json:"location"`
-}
-
-type dbFieldIndex struct {
-	CIDR     int
-	LowIP    int
-	HighIP   int
-	Location int
-}
-
 // SetupEngine initializes the engine
 func SetupEngine(config *Config) {
 	dbs = make([][]*Database, 0)
 	locmap = initializeLocationMap(config)
+
+	// Get the database into memory
+	for i, dbcs := range config.Databases {
+		for _, dbc := range dbcs {
+			setupDatabase(&dbc, i)
+		}
+	}
 }
 
-// SetupDatabase caches the databse in memory
-func SetupDatabase(dbc *DatabaseConfig, index int) {
+// setupDatabase caches the databse in memory
+func setupDatabase(dbc *DatabaseConfig, index int) {
 	// Initialize
 	mdb := Database{make([]*DatabaseRow, 0), dbc.UseLocMap}
 

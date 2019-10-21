@@ -1,4 +1,4 @@
-package main
+package geoip
 
 type rowStack []*DatabaseRow
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/miekg/dns"
+	g "github.com/pulsejet/geoipns/geoip"
 )
 
 // parseQuery parses and responds to the message
@@ -26,7 +27,7 @@ func parseQuery(m *dns.Msg) {
 			ip := replacer.Replace(q.Name)
 
 			// Send response
-			rr, err := dns.NewRR(fmt.Sprintf("%s TXT %s", q.Name, GeoHandle(ip)))
+			rr, err := dns.NewRR(fmt.Sprintf("%s TXT %s", q.Name, g.GeoHandle(ip)))
 			if err == nil {
 				m.Answer = append(m.Answer, rr)
 			}

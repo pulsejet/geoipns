@@ -7,22 +7,16 @@ import (
 	"os"
 
 	"github.com/miekg/dns"
+	g "github.com/pulsejet/geoipns/geoip"
 )
 
-var mConfig Config
-
-// Config is the configuration format
-type Config struct {
-	Debug   bool   `json:"debug"`
+type config struct {
+	g.Config
 	Address string `json:"address"`
 	Suffix  string `json:"suffix"`
-
-	Databases [][]DatabaseConfig `json:"databases"`
-
-	LocationFile      string   `json:"location_file"`
-	LocationFileField []string `json:"location_file_field"`
-	LocationFileKey   string   `json:"location_file_key"`
 }
+
+var mConfig config
 
 // SetupEnvironment loads conig and initializes databases
 func SetupEnvironment(configFile string) {
@@ -37,14 +31,7 @@ func SetupEnvironment(configFile string) {
 	json.Unmarshal(byteValue, &mConfig)
 
 	// Setup Engine
-	SetupEngine(&mConfig)
-
-	// Get the database into memory
-	for i, dbcs := range mConfig.Databases {
-		for _, dbc := range dbcs {
-			SetupDatabase(&dbc, i)
-		}
-	}
+	g.SetupEngine(&mConfig.Config)
 }
 
 func main() {
