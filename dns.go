@@ -39,6 +39,8 @@ func parseQuery(m *dns.Msg) {
 
 // handleDNSRequest handles the connection from client
 func handleDNSRequest(w dns.ResponseWriter, r *dns.Msg) {
+	defer w.Close()
+
 	m := new(dns.Msg)
 	m.SetReply(r)
 	m.Compress = false
