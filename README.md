@@ -48,4 +48,4 @@ will return
 ```
 
 # Testing
-Use `go test -v` in the `geoip` folder to run automated tests.
+Use `go test -v ./...` to run automated tests.

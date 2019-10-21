@@ -6,12 +6,13 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
 	"testing"
 )
 
 type GeoHandleTestCase struct {
-	IP   string `json:"ip"`
-	Want string `json:"want"`
+	IP   string   `json:"ip"`
+	Want []string `json:"want"`
 }
 
 func TestGeoHandle(t *testing.T) {
@@ -44,7 +45,7 @@ func TestGeoHandle(t *testing.T) {
 	for _, test := range cases {
 		t.Run(fmt.Sprintf("GeoHandle %s", test.IP), func(t *testing.T) {
 			got := GeoHandle(test.IP)
-			if got != test.Want {
+			if !reflect.DeepEqual(got, test.Want) {
 				t.Errorf("GeoHandle(%s) = %s; want %s", test.IP, got, test.Want)
 			}
 		})

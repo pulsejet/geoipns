@@ -3,37 +3,43 @@
     "address": "127.0.0.1:5312",
     "suffix": "location",
 
-    "databases": [
-        [
-            {
-                "file": "test/intranet.csv",
-                "fields": {
-                    "cidr": "cidr",
-                    "low_ip": "start_ip",
-                    "high_ip": "end_ip",
-                    "data": "location"
+    "database_sets": [
+        {
+            "attribute_name": "location",
+            "databases": [
+                {
+                    "file": "test/intranet.csv",
+                    "fields": {
+                        "cidr": "cidr",
+                        "low_ip": "start_ip",
+                        "high_ip": "end_ip",
+                        "data": "location"
+                    },
+                    "use_hashmap": false
                 },
-                "use_hashmap": false
-            },
-            {
-                "file": "test/intranet_2.csv",
-                "fields": {
-                    "cidr": "cidr",
-                    "data": "location"
-                },
-                "use_hashmap": true
-            }
-        ],
-        [
-            {
-                "file": "test/intranet_asn.csv",
-                "fields": {
-                    "cidr": "cidr",
-                    "data": "asn"
-                },
-                "use_hashmap": false
-            }
-        ]
+                {
+                    "file": "test/intranet_2.csv",
+                    "fields": {
+                        "cidr": "cidr",
+                        "data": "location"
+                    },
+                    "use_hashmap": true
+                }
+            ]
+        },
+        {
+            "attribute_name": "asn",
+            "databases": [
+                {
+                    "file": "test/intranet_asn.csv",
+                    "fields": {
+                        "cidr": "cidr",
+                        "data": "asn"
+                    },
+                    "use_hashmap": false
+                }
+            ]
+        }
     ],
     "hashmap_file": "test/intranet_locations.csv",
     "hashmap_file_key": "id",

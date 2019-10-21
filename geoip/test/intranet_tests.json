@@ -1,74 +1,74 @@
 [
     {
         "ip": "1.0.0.0",
-        "want": "||S"
+        "want": []
     },
     {
         "ip": "10.105.0.0",
-        "want": "Old_CSE_Building||S"
+        "want": ["location=Old CSE Building"]
     },
     {
         "ip": "10.105.5.10",
-        "want": "Old_CSE_Building||S"
+        "want": ["location=Old CSE Building"]
     },
     {
         "ip": "10.105.255.255",
-        "want": "Old_CSE_Building||S"
+        "want": ["location=Old CSE Building"]
     },
     {
         "ip": "10.105.177.0",
-        "want": "Gymkhana|LunaSol|S"
+        "want": ["location=Gymkhana", "asn=LunaSol"]
     },
     {
         "ip": "10.105.177.10",
-        "want": "Gymkhana|LunaSol|S"
+        "want": ["location=Gymkhana", "asn=LunaSol"]
     },
     {
         "ip": "10.105.177.16",
-        "want": "Gymkhana||S"
+        "want": ["location=Gymkhana"]
     },
     {
         "ip": "10.105.177.120",
-        "want": "Redis||S"
+        "want": ["location=Redis"]
     },
     {
         "ip": "10.105.177.125",
-        "want": "Redis||S"
+        "want": ["location=Redis"]
     },
     {
         "ip": "10.105.177.130",
-        "want": "Backup_Servers||S"
+        "want": ["location=Backup Servers"]
     },
     {
         "ip": "10.105.177.4",
-        "want": "SMP|LunaSol|S"
+        "want": ["location=SMP", "asn=LunaSol"]
     },
     {
         "ip": "10.1.0.0",
-        "want": "Hostel_1,_North|Hostel_Provider|S"
+        "want": ["location=Hostel 1, North", "asn=Hostel Provider"]
     },
     {
         "ip": "10.2.0.0",
-        "want": "Hostel_2,_North|Hostel_Provider|S"
+        "want": ["location=Hostel 2, North", "asn=Hostel Provider"]
     },
     {
         "ip": "10.3.1.0",
-        "want": "Hostel_3,_North|Hostel_Provider|S"
+        "want": ["location=Hostel 3, North", "asn=Hostel Provider"]
     },
     {
         "ip": "10.4.4.0",
-        "want": "Hostel_4,_NorthWest|Hostel_Provider|S"
+        "want": ["location=Hostel 4, NorthWest", "asn=Hostel Provider"]
     },
     {
         "ip": "10.5.5.0",
-        "want": "Hostel_5,_West|Hostel_Provider|S"
+        "want": ["location=Hostel 5, West", "asn=Hostel Provider"]
     },
     {
         "ip": "10.6.6.2",
-        "want": "West|Hostel_Provider|S"
+        "want": ["location=West", "asn=Hostel Provider"]
     },
     {
         "ip": "10.197.2.5",
-        "want": "|Wireless|S"
+        "want": ["asn=Wireless"]
     }
 ]
