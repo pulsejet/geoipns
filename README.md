@@ -44,4 +44,4 @@ will return
 ```
 
 # Testing
-Use `go test` to run automated tests.
+Use `go test -v` to run automated tests.
