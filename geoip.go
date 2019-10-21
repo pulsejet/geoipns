@@ -142,7 +142,7 @@ func SetupDatabase(dbc *DatabaseConfig, index int) {
 			indices.Location = i
 		case dbc.Fields.HighIP:
 			indices.HighIP = i
-		case dbc.Fields.Location:
+		case dbc.Fields.LowIP:
 			indices.LowIP = i
 		}
 	}
