@@ -15,12 +15,12 @@ import (
 
 // Main database
 var databaseSets []*DatabaseSet
-var locmap map[string]string
+var hashMap map[string]string
 
 func (r DatabaseRow) getResponse(db *Database) string {
 	// Lookup location
-	if db.UseLocMap {
-		return locmap[*r.Location]
+	if db.UseHashMap {
+		return hashMap[*r.Location]
 	}
 	return *r.Location
 }
@@ -67,7 +67,7 @@ func (db Database) Lookup(lookupIP net.IP) *DatabaseRow {
 // SetupEngine initializes the engine
 func SetupEngine(config *Config) {
 	databaseSets = make([]*DatabaseSet, 0)
-	locmap = initializeLocationMap(config)
+	hashMap = initializeHashMap(config)
 
 	// Get the database into memory
 	for _, dbcs := range config.DatabaseSets {
@@ -86,7 +86,7 @@ func SetupEngine(config *Config) {
 // setupDatabase caches the databse in memory
 func setupDatabase(dbc *DatabaseConfig) *Database {
 	// Initialize
-	mdb := &Database{make([]*DatabaseRow, 0), dbc.UseLocMap}
+	mdb := &Database{make([]*DatabaseRow, 0), dbc.UseHashMap}
 
 	// Indices of fields
 	indices := dbFieldIndex{CIDR: -1, Location: -1}

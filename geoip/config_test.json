@@ -13,7 +13,7 @@
                     "high_ip": "end_ip",
                     "location": "location"
                 },
-                "use_loc_map": false
+                "use_hashmap": false
             },
             {
                 "file": "test/intranet_2.csv",
@@ -21,7 +21,7 @@
                     "cidr": "cidr",
                     "location": "location"
                 },
-                "use_loc_map": true
+                "use_hashmap": true
             }
         ],
         [
@@ -31,7 +31,7 @@
                     "cidr": "cidr",
                     "location": "asn"
                 },
-                "use_loc_map": false
+                "use_hashmap": false
             }
         ]
     ],

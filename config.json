@@ -15,7 +15,7 @@
                         "high_ip": "end_ip",
                         "location": "location"
                     },
-                    "use_loc_map": false
+                    "use_hashmap": false
                 },
                 {
                     "file": "data/GeoLite2-City-Blocks-IPv4.csv",
@@ -23,7 +23,7 @@
                         "cidr": "network",
                         "location": "geoname_id"
                     },
-                    "use_loc_map": true
+                    "use_hashmap": true
                 },
                 {
                     "file": "data/GeoLite2-City-Blocks-IPv6.csv",
@@ -31,7 +31,7 @@
                         "cidr": "network",
                         "location": "geoname_id"
                     },
-                    "use_loc_map": true
+                    "use_hashmap": true
                 }
             ]
         },
@@ -43,7 +43,7 @@
                         "cidr": "network",
                         "location": "autonomous_system_organization"
                     },
-                    "use_loc_map": false
+                    "use_hashmap": false
                 },
                 {
                     "file": "data/GeoLite2-ASN-Blocks-IPv6.csv",
@@ -51,7 +51,7 @@
                         "cidr": "network",
                         "location": "autonomous_system_organization"
                     },
-                    "use_loc_map": false
+                    "use_hashmap": false
                 }
             ]
         }

@@ -21,9 +21,9 @@ type DatabaseConfigSet struct {
 
 // DatabaseConfig is the format of configuration for geoip db
 type DatabaseConfig struct {
-	File      string               `json:"file"`
-	Fields    DatabaseConfigFields `json:"fields"`
-	UseLocMap bool                 `json:"use_loc_map"`
+	File       string               `json:"file"`
+	Fields     DatabaseConfigFields `json:"fields"`
+	UseHashMap bool                 `json:"use_hashmap"`
 }
 
 // DatabaseConfigFields is the format of fields for geoip db
@@ -34,7 +34,7 @@ type DatabaseConfigFields struct {
 	Location string `json:"location"`
 }
 
-// Database a set of databases of GeoIP
+// DatabaseSet a set of databases of GeoIP
 type DatabaseSet struct {
 	AttributeName string
 	Databases     []*Database
@@ -42,8 +42,8 @@ type DatabaseSet struct {
 
 // Database a database of GeoIP
 type Database struct {
-	Rows      []*DatabaseRow
-	UseLocMap bool
+	Rows       []*DatabaseRow
+	UseHashMap bool
 }
 
 // DatabaseRow represents a single row in the databse

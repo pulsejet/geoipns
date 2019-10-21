@@ -7,12 +7,12 @@ import (
 	"os"
 )
 
-func initializeLocationMap(config *Config) map[string]string {
-	lmap := map[string]string{}
+func initializeHashMap(config *Config) map[string]string {
+	hm := map[string]string{}
 
 	// Check if configuration present
 	if config.LocationFile == "" {
-		return lmap
+		return hm
 	}
 
 	// Open the file
@@ -33,14 +33,14 @@ func initializeLocationMap(config *Config) map[string]string {
 
 	// Get indices
 	keyIndex := -1
-	locIndices := make([]int, len(config.LocationFileField))
+	indices := make([]int, len(config.LocationFileField))
 	for i, f := range header {
 		if f == config.LocationFileKey {
 			keyIndex = i
 		} else {
 			for j, x := range config.LocationFileField {
 				if x == f {
-					locIndices[j] = i
+					indices[j] = i
 				}
 			}
 		}
@@ -59,18 +59,18 @@ func initializeLocationMap(config *Config) map[string]string {
 		}
 
 		// Get location
-		loc := ""
-		for _, i := range locIndices {
+		val := ""
+		for _, i := range indices {
 			if i != -1 && record[i] != "" {
-				if loc == "" {
-					loc += record[i]
+				if val == "" {
+					val += record[i]
 				} else {
-					loc += ", " + record[i]
+					val += ", " + record[i]
 				}
 			}
 		}
-		lmap[record[keyIndex]] = loc
+		hm[record[keyIndex]] = val
 	}
 
-	return lmap
+	return hm
 }
