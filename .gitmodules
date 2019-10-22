@@ -1,0 +1,3 @@
+[submodule "client/php/phpdns"]
+	path = client/php/phpdns
+	url = https://github.com/purplepixie/phpdns
