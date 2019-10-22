@@ -1,4 +1,4 @@
-# GeoIP NS
+# GeoIPNS
 
 Make DNS queries to get the geolocation and ASN name of an IP address
 
