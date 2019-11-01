@@ -144,6 +144,10 @@ func setupDatabase(dbc *DatabaseConfig) *Database {
 		if indices.CIDR == -1 || record[indices.CIDR] == "" {
 			plowIP := net.ParseIP(record[indices.LowIP])
 			phighIP := net.ParseIP(record[indices.HighIP])
+			if bytes.Compare(plowIP, phighIP) > 0 {
+				log.Println("Ignoring incorrect record", record[indices.LowIP], record[indices.HighIP])
+				continue
+			}
 			if plowIP == nil || phighIP == nil {
 				log.Println("Failed to parse", record[indices.LowIP], record[indices.HighIP])
 				continue
