@@ -23,13 +23,14 @@ const dns = require('dns');
 /** Request for location and ASN data with no time limit */
 function getGeoIPNS(ip, config) {
     // Set servers
+    const resolver = new Resolver();
     if (config.servers) {
-        dns.setServers(config.servers);
+        resolver.setServers(config.geoipns_servers);
     }
 
     return new Promise((resolve, reject) => {
         const result = {};
-        dns.resolveTxt(`${ip}.${config.suffix || "geoipns"}`, (err, res) => {
+        resolver.resolveTxt(`${ip}.${config.suffix || "geoipns"}`, (err, res) => {
             if (err) {
                 reject(err);
                 return;
