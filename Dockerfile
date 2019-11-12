@@ -44,6 +44,6 @@ ENV SUFFIX=geoipns
 ENV INTRANET_CSV_URL=https://raw.githubusercontent.com/pulsejet/geoipns/master/geoip/test/intranet.csv
 
 # Execute
-CMD curl -m 10 -o intranet.csv $INTRANET_CSV_URL && \
+CMD curl -s -m 10 -o intranet.csv $INTRANET_CSV_URL && \
     sed -i "s#\"suffix\": \"geoipns\"#\"suffix\": \"$SUFFIX\"#g" config.json && \
     ./geoipns
