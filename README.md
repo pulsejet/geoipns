@@ -87,3 +87,14 @@ Testing GeoIPNS running on an LXC container limited to 4 vCPUs and 4GB RAM on a 
 Average 229μs per GeoIPNS request (phpdns)
 Average 433μs per GeoIPNS request (native)
 ```
+
+## Docker
+You can build and run the docker image directly, which will contain Maxmind's GeoIP2 lite data.
+```
+docker build . -t geoipns
+docker run -p5312:5312/udp -it geoipns`
+```
+
+Two environment variables can be set:
+* `SUFFIX`: the DNS suffix to listen on
+* `INTRANET_CSV_URL`: a URL pointing to a CSV file with location entries other than GeoIP2 lite
