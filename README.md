@@ -1,6 +1,6 @@
 # GeoIPNS
 
-Make DNS queries to get the geolocation and ASN name of an IP address
+Make DNS queries to get the geolocation and ASN name of an IP address. You can read the original blog post about why this project exists [here](https://medium.com/@varunpp2/locating-ip-addresses-with-dns-queries-af54228ea29c).
 
 [![Build Status](https://travis-ci.org/pulsejet/geoipns.svg?branch=master)](https://travis-ci.org/pulsejet/geoipns)
 [![codecov](https://codecov.io/gh/pulsejet/geoipns/branch/master/graph/badge.svg)](https://codecov.io/gh/pulsejet/geoipns)
