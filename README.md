@@ -89,10 +89,9 @@ Average 433μs per GeoIPNS request (native)
 ```
 
 ## Docker
-You can build and run the docker image directly, which will contain Maxmind's GeoIP2 lite data.
+You can build or pull and run the docker image directly, which will contain Maxmind's GeoIP2 lite data.
 ```
-docker build . -t geoipns
-docker run -p5312:5312/udp -it geoipns`
+docker run -p5312:5312/udp -it radialapps/geoipns:latest`
 ```
 
 Two environment variables can be set:
