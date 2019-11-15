@@ -23,9 +23,9 @@ const dns = require('dns');
 /** Request for location and ASN data with no time limit */
 function getGeoIPNS(ip, config) {
     // Set servers
-    const resolver = new Resolver();
+    const resolver = new dns.Resolver();
     if (config.servers) {
-        resolver.setServers(config.geoipns_servers);
+        resolver.setServers(config.servers);
     }
 
     return new Promise((resolve, reject) => {
