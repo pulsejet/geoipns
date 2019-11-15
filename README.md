@@ -12,7 +12,7 @@ Make DNS queries to get the geolocation and ASN name of an IP address. You can r
 Make a `TXT` query for `IP.geoipns` to the server to get the location and ASN name of `IP` in an [RFC 1464](https://tools.ietf.org/html/rfc1464) compliant format. The model can be easily extended to store arbitrary data about IP subnets using the configuration file.
 
 To build and run
-```
+```shell
 go get github.com/pulsejet/geoipns && cd $GOPATH/src/github.com/pulsejet/geoipns
 dep ensure
 go build
@@ -21,13 +21,13 @@ go build
 ```
 
 To query
-```
+```shell
 dig @localhost -p5312 -tTXT 3.105.177.255.geoipns
 ```
 
 will return
 
-```
+```text
 ; <<>> DiG 9.11.3-1ubuntu1.7-Ubuntu <<>> @localhost -p5312 -tTXT 3.105.177.255.geoipns
 ; (1 server found)
 ;; global options: +cmd
@@ -83,15 +83,15 @@ Use `go test -v ./...` to run automated tests.
 
 ## Benchmark
 Testing GeoIPNS running on an LXC container limited to 4 vCPUs and 4GB RAM on a `24 x Intel(R) Xeon(R) CPU E5-2620 v2 @ 2.10GHz` machine with PHP7.3 on the same machine in a different container for 10000 randomized IPv4 requests gave the following results:
-```
+```text
 Average 229μs per GeoIPNS request (phpdns)
 Average 433μs per GeoIPNS request (native)
 ```
 
 ## Docker
 You can build or pull and run the docker image directly, which will contain Maxmind's GeoIP2 lite data.
-```
-docker run -p5312:5312/udp -it radialapps/geoipns:latest`
+```shell
+docker run -p5312:5312/udp -it radialapps/geoipns:latest
 ```
 
 Two environment variables can be set:
