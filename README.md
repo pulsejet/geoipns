@@ -82,10 +82,12 @@ would produce the following data structure (note that all IP addresses are inter
 Use `go test -v ./...` to run automated tests.
 
 ## Benchmark
-Testing GeoIPNS running on an LXC container limited to 4 vCPUs and 4GB RAM on a `24 x Intel(R) Xeon(R) CPU E5-2620 v2 @ 2.10GHz` machine with PHP7.3 on the same machine in a different container for 10000 randomized IPv4 requests gave the following results:
+Testing GeoIPNS running on an LXC container limited to 4 vCPUs and 4GB RAM on a `24 x Intel(R) Xeon(R) CPU E5-2620 v2 @ 2.10GHz` machine with PHP7.3 on the same machine for 10000 randomized IPv4 requests gave the following results:
 ```text
-Average 229μs per GeoIPNS request (phpdns)
-Average 433μs per GeoIPNS request (native)
+Average 433μs per GeoIPNS request (native DNS client + PHP, different container)
+Average 229μs per GeoIPNS request (phpdns, different container)
+Average 150μs per GeoIPNS request (singe-threaded C++, same container)
+Average 94μs per GeoIPNS request (goroutines, same container)
 ```
 
 ## Docker
