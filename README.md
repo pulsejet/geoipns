@@ -14,7 +14,7 @@ Make a `TXT` query for `IP.geoipns` to the server to get the location and ASN na
 To build and run,
 ```shell
 go get github.com/pulsejet/geoipns && cd $GOPATH/src/github.com/pulsejet/geoipns
-dep ensure
+dep ensure  # you may skip this step if deps are obtained automatically
 go build
 ./getdata.sh
 ./geoipns
