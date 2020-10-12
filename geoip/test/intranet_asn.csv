@@ -2,3 +2,5 @@ cidr,asn
 10.0.0.0/12,Hostel Provider
 10.196.0.0/12,Wireless
 10.105.177.0/28,LunaSol
+2607:f8b0:4004:0807:0000:0000:0000:0000/64,Google
+2620:1ec:c11::/48,Microsoft

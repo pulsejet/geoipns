@@ -4,3 +4,5 @@ cidr,start_ip,end_ip,location
 ,10.105.177.120,10.105.177.200,Backup Servers
 ,10.105.177.120,10.105.177.128,Redis
 ,10.105.177.4,10.105.177.4,SMP
+,2607:f8b0:4004:0807:0000:0000:0000:0000,2607:f8b0:4004:0807:ffff:ffff:ffff:ffff,California
+,2620:1ec:c11::,2620:1ec:c11:ffff:ffff:ffff:ffff:ffff,Seattle

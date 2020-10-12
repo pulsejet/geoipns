@@ -70,5 +70,29 @@
     {
         "ip": "10.197.2.5",
         "want": ["asn=Wireless"]
+    },
+    {
+        "ip": "2607:f8b0:4004:0807:0000:0000:0000:200e",
+        "want": ["location=California", "asn=Google"]
+    },
+    {
+        "ip": "2607:f8b0:4004:807::200e",
+        "want": ["location=California", "asn=Google"]
+    },
+    {
+        "ip": "2620:1ec:c11:0:0:0:0:200",
+        "want": ["location=Seattle", "asn=Microsoft"]
+    },
+    {
+        "ip": "2620:1ec:c11::200",
+        "want": ["location=Seattle", "asn=Microsoft"]
+    },
+    {
+        "ip": "2620:01ec:0c11:0000:0000:0000:0000:0200",
+        "want": ["location=Seattle", "asn=Microsoft"]
+    },
+    {
+        "ip": "2606:2800:220:1:248:1893:25c8:1946",
+        "want": ["location=Example, DotCom"]
     }
 ]
