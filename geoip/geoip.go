@@ -137,8 +137,8 @@ func setupDatabase(dbc *DatabaseConfig) *Database {
 		}
 
 		// Start and end IP addresses
-		var lowIP net.IP
-		var highIP net.IP
+		lowIP := make(net.IP, 16)
+		highIP := make(net.IP, 16)
 
 		// Check if CIDR is to be parsed
 		if indices.CIDR == -1 || record[indices.CIDR] == "" {
@@ -152,8 +152,8 @@ func setupDatabase(dbc *DatabaseConfig) *Database {
 				log.Println("Failed to parse", record[indices.LowIP], record[indices.HighIP])
 				continue
 			}
-			lowIP = plowIP.To16()
-			highIP = phighIP.To16()
+			copy(lowIP, plowIP.To16())
+			copy(highIP, phighIP.To16())
 		} else {
 			// Get CIDR
 			cidr := record[indices.CIDR]
@@ -169,13 +169,13 @@ func setupDatabase(dbc *DatabaseConfig) *Database {
 			for i := range n.IP {
 				n.IP[i] &= n.Mask[i]
 			}
-			lowIP = n.IP.To16()
+			copy(lowIP, n.IP.To16())
 
 			// Get the upper IP
 			for i := range n.IP {
 				n.IP[i] |= ^n.Mask[i]
 			}
-			highIP = n.IP.To16()
+			copy(highIP, n.IP.To16())
 		}
 
 		// Pointer to data
