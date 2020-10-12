@@ -16,7 +16,7 @@ To build and run,
 go get github.com/pulsejet/geoipns && cd $GOPATH/src/github.com/pulsejet/geoipns
 dep ensure  # you may skip this step if deps are obtained automatically
 go build
-./getdata.sh
+./getdata.sh  # write your custom script to get GeoIP data
 ./geoipns
 ```
 
@@ -69,10 +69,8 @@ Average 94μs per GeoIPNS request (goroutines, same container)
 ```
 
 ## Docker
-You can build or pull and run the docker image directly, which will contain Maxmind's GeoIP2 lite data.
-```shell
-docker run -p5312:5312/udp -it radialapps/geoipns:latest
-```
+
+> Since the GeoLite database cannot be downloaded directly any more, you will have to write your own script replacing getdata.sh to download the GeoIP database as a CSV. The `getdata.sh` and `Dockerfile` files are kept in the repository for historical purposes only.
 
 Two environment variables can be set:
 * `SUFFIX`: the DNS suffix to listen on
